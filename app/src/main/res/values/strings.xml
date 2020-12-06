@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Smart-site-inspection-system</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_username">用户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"登录成功"</string>
+    <string name="invalid_username">不合法的用户名</string>
+    <string name="invalid_password">密码长度过短</string>
+    <string name="login_failed">"登录失败"</string>
 </resources>
