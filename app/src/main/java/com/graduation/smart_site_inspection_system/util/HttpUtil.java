@@ -1,5 +1,8 @@
 package com.graduation.smart_site_inspection_system.util;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,9 +16,9 @@ public class HttpUtil {
     private static final String mTomcat = "http://39.99.249.23:8080/Taobao/";
 
     //http操作
-    private static String HttpPost(String data, String subUrl) {
+    private static JSONObject HttpPost(String data, String subUrl) {
         String address = mTomcat + subUrl;
-        String result = null;
+        JSONObject result = null;
         try {
             URL url = new URL(address);//初始化URL
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -41,17 +44,15 @@ public class HttpUtil {
                 }
                 is.close();
                 message.close();
-                result = new String(message.toByteArray());
+                result = new JSONObject(new String(message.toByteArray()));
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public static String projectCheck_Get(String id_user) {
+    public static JSONObject projectCheck_Get(String id_user) {
         return HttpPost(id_user,"projectCheck_Get.do");
     }
 }

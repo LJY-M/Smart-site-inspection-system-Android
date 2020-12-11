@@ -52,7 +52,7 @@ public class ProjectCheckFragment extends Fragment {
                 case projectCheckGet.Msg_projectCheckGet_what: //根据用户id得到项目列表
                     bundle=msg.getData();
                     data=bundle.getString(projectCheckGet.Msg_projectCheckGet_String);
-//                    此处解析data数据
+// TODO                   此处解析data数据
                     count = 5;
                     for(int i=0; i<count; i++){
                         nowPCBean = new ProjectCheckBean();
