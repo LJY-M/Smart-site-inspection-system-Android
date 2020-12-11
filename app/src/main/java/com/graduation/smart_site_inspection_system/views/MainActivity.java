@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 1:
 //                每次进入重新加载项目检查页面
-                f2 = new ProjectCheckFragment(handler);
+                f2 = new ProjectCheckFragment();
                 ftr.add(R.id.fl1, f2).commit();
                 break;
             case 2:

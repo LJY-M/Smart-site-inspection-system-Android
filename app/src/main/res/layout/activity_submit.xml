@@ -28,7 +28,7 @@
             android:id="@+id/submit_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="项目检查"
+            android:text="@string/submit_title_s"
             android:textColor="#ffffff"
             android:textSize="30dp"
             app:layout_constraintBottom_toBottomOf="parent"

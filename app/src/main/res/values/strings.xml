@@ -9,4 +9,7 @@
     <string name="invalid_username">不合法的用户名</string>
     <string name="invalid_password">密码长度过短</string>
     <string name="login_failed">"登录失败"</string>
+
+    <string name="check_top_s">项目检查</string>
+    <string name="submit_title_s">项目检查</string>
 </resources>
