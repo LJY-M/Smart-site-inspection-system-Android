@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import java.util.HashMap;
+
 /**
  *  接口1：获取项目
  *  传过去：用户id
@@ -25,7 +27,9 @@ public class projectCheckGet extends Thread{
     public void run() {
         try{
             //传递的数据
-            String result = HttpUtil.projectCheck_Get(account);
+            HashMap<String,String> options=new HashMap<>();
+            options.put("userId","123");
+            String result = HttpUtil.projectCheck_Get(options).toString();
             Bundle bundle = new Bundle();
             bundle.putString(Msg_projectCheckGet_String, result);
 

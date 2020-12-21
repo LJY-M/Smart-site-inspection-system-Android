@@ -10,13 +10,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpUtil {
     //    服务器地址
     private static final String mTomcat = "http://39.99.249.23:8080/Taobao/";
 
     //http操作
-    private static JSONObject HttpPost(String data, String subUrl) {
+    private static JSONObject HttpPost(HashMap<String,String> options, String subUrl) {
         String address = mTomcat + subUrl;
         JSONObject result = null;
         try {
@@ -28,11 +30,9 @@ public class HttpUtil {
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setUseCaches(false);
-            data = "data=" + data;
-            OutputStream out = conn.getOutputStream();
-            out.write(data.getBytes());
-            out.flush();
-            out.close();
+            for(Map.Entry<String,String> option:options.entrySet()){
+                conn.setRequestProperty(option.getKey(),option.getValue());
+            }
             conn.connect();
             if (conn.getResponseCode() == 200) {
                 InputStream is = conn.getInputStream();
@@ -52,8 +52,12 @@ public class HttpUtil {
         return result;
     }
 
-    public static JSONObject projectCheck_Get(String id_user) {
-        return HttpPost(id_user,"projectCheck_Get.do");
+    public static JSONObject projectCheck_Get(HashMap<String,String> options) {
+        return HttpPost(options,"projectCheck_Get.do");
+    }
+
+    public  static JSONObject shelfProjects_Get(HashMap<String,String> options) {
+        return HttpPost(options,"shelfProjects.do");
     }
 }
 

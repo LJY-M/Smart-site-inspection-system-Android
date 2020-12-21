@@ -2,19 +2,39 @@ package com.graduation.smart_site_inspection_system.Fragment_ProjectSearch;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSON;
 import com.baozi.treerecyclerview.adpater.TreeRecyclerAdapter;
 import com.baozi.treerecyclerview.adpater.TreeRecyclerType;
+import com.baozi.treerecyclerview.base.BaseRecyclerAdapter;
 import com.baozi.treerecyclerview.base.ViewHolder;
+import com.baozi.treerecyclerview.factory.ItemHelperFactory;
 import com.baozi.treerecyclerview.item.SimpleTreeItem;
+import com.baozi.treerecyclerview.item.TreeItem;
+import com.graduation.smart_site_inspection_system.Bean.ProjectTree.ClientBean;
 import com.graduation.smart_site_inspection_system.R;
+import com.graduation.smart_site_inspection_system.util.HttpUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class ProjectSearchFragment extends Fragment {
@@ -30,20 +50,59 @@ public class ProjectSearchFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_projectsearch, container, false);
     }
 
-    private void init(){
-        TreeRecyclerAdapter treeRecyclerAdapter = new TreeRecyclerAdapter(TreeRecyclerType.SHOW_EXPAND);
-        SimpleTreeItem simpleTreeItem = new SimpleTreeItem()//传入布局id.
-                .onItemBind(new SimpleTreeItem.Consumer<ViewHolder>() {
-                    @Override
-                    public void accept(ViewHolder viewHolder) {
-
-                    }
-                })
-                .onItemClick(new SimpleTreeItem.Consumer<ViewHolder>() {
-                    @Override
-                    public void accept(ViewHolder viewHolder) {
-
-                    }
-                });
+    @Override
+    public void onStart() {
+        super.onStart();
+        init();
     }
+
+    private void init(){
+        final TreeRecyclerAdapter treeRecyclerAdapter = new TreeRecyclerAdapter(TreeRecyclerType.SHOW_EXPAND);
+        RecyclerView recyclerView = getView().findViewById(R.id.rv_content);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 6));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(treeRecyclerAdapter);
+//        treeRecyclerAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(@NonNull ViewHolder viewHolder, int position) {
+//                Toast.makeText(getContext(), "点击了"+position, Toast.LENGTH_SHORT).show();
+//                treeRecyclerAdapter.getItemManager().getItem(position).onClick(viewHolder);
+//            }
+//        });
+        /*HashMap<String,String> options=new HashMap<>();
+        options.put("userId","123");
+        try {
+            List<ClientBean> clientBeans= JSON.parseArray(HttpUtil.shelfProjects_Get(options).getJSONArray("result").toString(),ClientBean.class);
+            List<TreeItem> items = ItemHelperFactory.createItems(clientBeans);
+            treeRecyclerAdapter.getItemManager().replaceAllItem(items);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
+//        new Thread() {
+//            @Override
+//            public void run() {
+                //super.run();
+                String string = getFromAssets("testproject.txt");
+                List<ClientBean> clientBeans = JSON.parseArray(string, ClientBean.class);
+                List<TreeItem> items = ItemHelperFactory.createItems(clientBeans);
+                treeRecyclerAdapter.getItemManager().replaceAllItem(items);
+//            }
+//        }.start();
+    }
+
+    public String getFromAssets(String fileName) {
+        StringBuilder result = new StringBuilder();
+        try {
+            InputStreamReader inputReader = new InputStreamReader(getResources().getAssets().open(fileName));
+            BufferedReader bufReader = new BufferedReader(inputReader);
+            String line;
+            while ((line = bufReader.readLine()) != null)
+                result.append(line);
+            return result.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result.toString();
+    }
+
 }
