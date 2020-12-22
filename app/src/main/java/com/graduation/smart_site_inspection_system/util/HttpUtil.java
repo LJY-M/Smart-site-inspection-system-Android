@@ -1,26 +1,34 @@
 package com.graduation.smart_site_inspection_system.util;
 
+import androidx.annotation.Nullable;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.graduation.smart_site_inspection_system.Bean.GroupBean;
+import com.graduation.smart_site_inspection_system.Bean.ProjectCheckBean;
+import com.graduation.smart_site_inspection_system.Bean.ProjectTree.ClientBean;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HttpUtil {
     //    服务器地址
-    private static final String mTomcat = "http://39.99.249.23:8080/Taobao/";
+    private static final String SERVER = "http://39.106.66.219:3000/mock/11/";//"http://39.99.249.23:8080/Taobao/";
 
     //http操作
-    private static JSONObject HttpPost(HashMap<String,String> options, String subUrl) {
-        String address = mTomcat + subUrl;
-        JSONObject result = null;
+    private static String HttpPost(String subUrl, @Nullable HashMap<String, String> options) {
+        String address = SERVER + subUrl;
+        String result = null;
         try {
             URL url = new URL(address);//初始化URL
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -30,10 +38,21 @@ public class HttpUtil {
             conn.setDoOutput(true);
             conn.setDoInput(true);
             conn.setUseCaches(false);
-            for(Map.Entry<String,String> option:options.entrySet()){
-                conn.setRequestProperty(option.getKey(),option.getValue());
-            }
+            conn.setRequestProperty("Authorization", UserUtil.getToken());
             conn.connect();
+            OutputStream out = conn.getOutputStream();
+            if (options != null) {
+                int count = 0;
+                for (Map.Entry<String, String> option : options.entrySet()) {
+                    String data = "";
+                    if (++count > 1)
+                        data += "&";
+                    data += (option.getKey() + "=" + option.getValue());
+                    out.write(data.getBytes());
+                }
+            }
+            out.flush();
+            out.close();
             if (conn.getResponseCode() == 200) {
                 InputStream is = conn.getInputStream();
                 ByteArrayOutputStream message = new ByteArrayOutputStream();
@@ -44,20 +63,58 @@ public class HttpUtil {
                 }
                 is.close();
                 message.close();
-                result = new JSONObject(new String(message.toByteArray()));
+                result = new String(message.toByteArray());
             }
-        } catch (JSONException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public static JSONObject projectCheck_Get(HashMap<String,String> options) {
-        return HttpPost(options,"projectCheck_Get.do");
+    public static String HttpGet(String subUrl, @Nullable HashMap<String, String> options) {
+        String address = SERVER + subUrl;
+        String message = null;
+        try {
+            URL url = new URL(address);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5 * 1000);
+            connection.setRequestProperty("Authorization", UserUtil.getToken());
+            connection.connect();
+            InputStream inputStream = connection.getInputStream();
+            byte[] data = new byte[1024];
+            StringBuffer sb = new StringBuffer();
+            int length = 0;
+            while ((length = inputStream.read(data)) != -1) {
+                String s = new String(data);
+                sb.append(s);
+            }
+            message = sb.toString();
+            inputStream.close();
+            connection.disconnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return message;
     }
 
-    public  static JSONObject shelfProjects_Get(HashMap<String,String> options) {
-        return HttpPost(options,"shelfProjects.do");
+    public static HashMap<GroupBean,List<ProjectCheckBean>> projectCheck_Get(HashMap<String, String> options) {
+        JSONArray data = JSON.parseObject(HttpPost("projectCheck_Get.do", options)).getJSONArray("data");
+        HashMap<GroupBean,List<ProjectCheckBean>> checkResult=new HashMap<>();
+        for (int i = 0; i < data.size(); i++) {
+            int groupId=((JSONObject)data.get(i)).getIntValue("id");
+            String groupName=((JSONObject)data.get(i)).get("name").toString();
+            boolean isLeader=((JSONObject)data.get(i)).getBooleanValue("isLeader");
+            List<ProjectCheckBean> projectCheckBeans=JSON.parseArray(((JSONObject)data.get(i)).getJSONArray("projectCheckResult").toJSONString(),ProjectCheckBean.class);
+            checkResult.put(new GroupBean(groupId,groupName,isLeader),projectCheckBeans);
+        }
+
+        return checkResult;
+    }
+
+    public static List<ClientBean> shelfProjects_Get(HashMap<String, String> options) {
+        JSONArray data = JSON.parseObject(HttpGet("iotsite/contract/contract_all", options)).getJSONArray("data");
+        return JSON.parseArray(data.toJSONString(), ClientBean.class);
     }
 }
 

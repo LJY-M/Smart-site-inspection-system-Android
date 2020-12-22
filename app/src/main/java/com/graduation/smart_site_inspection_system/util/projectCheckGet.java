@@ -4,7 +4,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.graduation.smart_site_inspection_system.Bean.GroupBean;
+import com.graduation.smart_site_inspection_system.Bean.ProjectCheckBean;
+
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *  接口1：获取项目
@@ -28,14 +32,15 @@ public class projectCheckGet extends Thread{
         try{
             //传递的数据
             HashMap<String,String> options=new HashMap<>();
-            options.put("userId","123");
-            String result = HttpUtil.projectCheck_Get(options).toString();
+            HashMap<GroupBean, List<ProjectCheckBean>> result = HttpUtil.projectCheck_Get(options);
             Bundle bundle = new Bundle();
-            bundle.putString(Msg_projectCheckGet_String, result);
+            //bundle.putString(Msg_projectCheckGet_String, result);
+
 
             //发送数据
             Message message = Message.obtain();
-            message.setData(bundle);   //message.obj=bundle 传值也行
+            //message.setData(bundle);   //message.obj=bundle 传值也行
+            message.obj=result;
             message.what = Msg_projectCheckGet_what;
             handler.sendMessage(message);
         }catch (Exception e){

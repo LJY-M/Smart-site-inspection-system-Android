@@ -5,9 +5,11 @@ public class ProjectCheckBean {
     private int ck_id;  //检查id
     private int pj_id;  //项目id
     private int group_id;  //检查组id
+    private int checksys_id;//检查体系id
     private String ck_createtime;  //创建时间
     private String ck_finshtime;  //ck_finshtime
     private int ck_risk;  //结果风险
+
     private String ck_description;  //结果描述
     private int ck_isexam;  //是否审核
     private int ck_ispass;  //是否通过
@@ -43,6 +45,14 @@ public class ProjectCheckBean {
 
     public void setGroup_id(int group_id) {
         this.group_id = group_id;
+    }
+
+    public int getChecksys_id() {
+        return checksys_id;
+    }
+
+    public void setChecksys_id(int checksys_id) {
+        this.checksys_id = checksys_id;
     }
 
     public String getCk_createtime() {

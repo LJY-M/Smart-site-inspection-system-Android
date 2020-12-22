@@ -15,7 +15,7 @@ public class ProjectItem extends TreeItemGroup<ClientBean.ProjectBean> {
     @Nullable
     @Override
     protected List<TreeItem> initChild(ClientBean.ProjectBean data) {
-        List<TreeItem> items = ItemHelperFactory.createItems(data.checkSys1s, this);
+        List<TreeItem> items = ItemHelperFactory.createItems(data.checkSystems, this);
         return items;
     }
 

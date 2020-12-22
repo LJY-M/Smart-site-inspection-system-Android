@@ -16,19 +16,19 @@ public class ClientBean {
     public static class ProjectBean {
         public int projectId;
         public String projectName;
-        public List<CheckSys1Bean> checkSys1s;
+        public List<CheckSys1Bean> checkSystems;
 
 
         @TreeDataType(iClass = CheckSys1Item.class)
         public static class CheckSys1Bean {
-            public int checkSys1Id;
-            public String checkSys1Name;
-            public List<CheckSys2Bean> checkSys2s;
+            public int id;
+            public String name;
+            public List<CheckSys2Bean> subCheckSystems;
 
             @TreeDataType(iClass = CheckSys2Item.class)
             public static class CheckSys2Bean {
-                public int checkSys2Id;
-                public String checkSys2Name;
+                public int id;
+                public String name;
             }
 
         }

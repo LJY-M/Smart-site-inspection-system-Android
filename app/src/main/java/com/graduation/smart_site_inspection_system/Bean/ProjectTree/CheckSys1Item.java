@@ -15,7 +15,7 @@ public class CheckSys1Item extends TreeItemGroup<ClientBean.ProjectBean.CheckSys
     @Nullable
     @Override
     protected List<TreeItem> initChild(ClientBean.ProjectBean.CheckSys1Bean data) {
-        List<TreeItem> items = ItemHelperFactory.createItems(data.checkSys2s, this);
+        List<TreeItem> items = ItemHelperFactory.createItems(data.subCheckSystems, this);
         return items;
     }
 
@@ -26,6 +26,6 @@ public class CheckSys1Item extends TreeItemGroup<ClientBean.ProjectBean.CheckSys
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder) {
-        viewHolder.setText(R.id.tv_content, data.checkSys1Name);
+        viewHolder.setText(R.id.tv_content, data.name);
     }
 }

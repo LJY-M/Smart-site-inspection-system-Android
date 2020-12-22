@@ -1,1 +1,77 @@
-[{"clientIdfield":123,"clientName":"委托方1","projects":[{"projectId":1234,"projectName":"项目1","checkSys1s":[{"checkSys1Id":12345,"checkSys1Name":"一级检查体系1","checkSys2s":[{"checkSys2Id":123456,"checkSys2Name":"二级检查体系1"},{"checkSys2Id":123457,"checkSys2Name":"二级检查体系2"}]}]},{"projectId":1235,"projectName":"项目2","checkSys1s":[{"checkSys1Id":12346,"checkSys1Name":"一级检查体系2","checkSys2s":[{"checkSys2Id":123456,"checkSys2Name":"二级检查体系3"},{"checkSys2Id":123457,"checkSys2Name":"二级检查体系4"}]}]}]},{"clientIdfield":123,"clientName":"委托方2","projects":[{"projectId":1234,"projectName":"项目3","checkSys1s":[{"checkSys1Id":12345,"checkSys1Name":"一级检查体系1","checkSys2s":[{"checkSys2Id":123456,"checkSys2Name":"二级检查体系1"},{"checkSys2Id":123457,"checkSys2Name":"二级检查体系2"}]}]},{"projectId":1235,"projectName":"项目4","checkSys1s":[{"checkSys1Id":12346,"checkSys1Name":"一级检查体系2","checkSys2s":[{"checkSys2Id":123456,"checkSys2Name":"二级检查体系3"},{"checkSys2Id":123457,"checkSys2Name":"二级检查体系4"}]}]}]}]
+[
+        {
+            "clientId": 1,
+            "clientName": "中建三局",
+            "projects": [
+                {
+                    "projectId": 1,
+                    "projectName": "LJY-Test",
+                    "clientId": 1,
+                    "checkSystems": [
+                        {
+                            "id": 1,
+                            "name": "安全检查",
+                            "weight": 3,
+                            "subCheckSystems": [
+                                {
+                                    "id": 4,
+                                    "name": "管理安全",
+                                    "weight": 6,
+                                    "subCheckSystems": null
+                                },
+                                {
+                                    "id": 5,
+                                    "name": "施工安全",
+                                    "weight": 2,
+                                    "subCheckSystems": null
+                                },
+                                {
+                                    "id": 6,
+                                    "name": "场地安全",
+                                    "weight": 1,
+                                    "subCheckSystems": null
+                                },
+                                {
+                                    "id": 12,
+                                    "name": "体检",
+                                    "weight": 5,
+                                    "subCheckSystems": null
+                                }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "name": "质量检查",
+                            "weight": 2,
+                            "subCheckSystems": [
+                                {
+                                    "id": 7,
+                                    "name": "材料质量",
+                                    "weight": 1,
+                                    "subCheckSystems": null
+                                },
+                                {
+                                    "id": 8,
+                                    "name": "成品质量",
+                                    "weight": 2,
+                                    "subCheckSystems": null
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "clientId": 2,
+            "clientName": "碧桂园",
+            "projects": [
+                {
+                    "projectId": 2,
+                    "projectName": "碧桂园八期工地验收",
+                    "clientId": 2,
+                    "checkSystems": []
+                }
+            ]
+        }
+    ]

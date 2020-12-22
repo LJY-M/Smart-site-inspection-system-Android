@@ -11,7 +11,7 @@ import com.graduation.smart_site_inspection_system.R;
 public class CheckSys2Item extends TreeItem<ClientBean.ProjectBean.CheckSys1Bean.CheckSys2Bean> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder) {
-        viewHolder.setText(R.id.tv_content,data.checkSys2Name);
+        viewHolder.setText(R.id.tv_content,data.name);
     }
     @Override
     public int getLayoutId() {

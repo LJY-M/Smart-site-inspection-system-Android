@@ -2,6 +2,7 @@ package com.graduation.smart_site_inspection_system.Fragment_ProjectSearch;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,7 @@ public class ProjectSearchFragment extends Fragment {
         init();
     }
 
-    private void init(){
+    private void init() {
         final TreeRecyclerAdapter treeRecyclerAdapter = new TreeRecyclerAdapter(TreeRecyclerType.SHOW_EXPAND);
         RecyclerView recyclerView = getView().findViewById(R.id.rv_content);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 6));
@@ -69,23 +70,34 @@ public class ProjectSearchFragment extends Fragment {
 //                treeRecyclerAdapter.getItemManager().getItem(position).onClick(viewHolder);
 //            }
 //        });
-        /*HashMap<String,String> options=new HashMap<>();
-        options.put("userId","123");
-        try {
-            List<ClientBean> clientBeans= JSON.parseArray(HttpUtil.shelfProjects_Get(options).getJSONArray("result").toString(),ClientBean.class);
-            List<TreeItem> items = ItemHelperFactory.createItems(clientBeans);
-            treeRecyclerAdapter.getItemManager().replaceAllItem(items);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-//        new Thread() {
+        handler = new Handler() {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+
+                treeRecyclerAdapter.getItemManager().replaceAllItem((List<TreeItem>) msg.obj);
+            }
+        };
+        new Thread() {
+            @Override
+            public void run() {
+                HashMap<String, String> options = new HashMap<>();
+                List<ClientBean> clientBeans = HttpUtil.shelfProjects_Get(options);
+                List<TreeItem> items = ItemHelperFactory.createItems(clientBeans);
+                Message message = new Message();
+                message.obj = items;
+                handler.sendMessage(message);
+            }
+        }.start();
+
+        //treeRecyclerAdapter.getItemManager().replaceAllItem(items);
+        //        new Thread() {
 //            @Override
 //            public void run() {
-                //super.run();
-                String string = getFromAssets("testproject.txt");
+        //super.run();
+                /*String string = getFromAssets("testproject.txt");
                 List<ClientBean> clientBeans = JSON.parseArray(string, ClientBean.class);
                 List<TreeItem> items = ItemHelperFactory.createItems(clientBeans);
-                treeRecyclerAdapter.getItemManager().replaceAllItem(items);
+                treeRecyclerAdapter.getItemManager().replaceAllItem(items);*/
 //            }
 //        }.start();
     }
