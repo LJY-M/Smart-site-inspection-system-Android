@@ -1,5 +1,7 @@
 package com.graduation.smart_site_inspection_system.util;
 
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 
 import com.alibaba.fastjson.JSON;
@@ -64,6 +66,8 @@ public class HttpUtil {
                 is.close();
                 message.close();
                 result = new String(message.toByteArray());
+            } else {
+                Toast.makeText(MyApplication.getContext(), conn.getResponseMessage(), Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,16 +85,20 @@ public class HttpUtil {
             connection.setConnectTimeout(5 * 1000);
             connection.setRequestProperty("Authorization", UserUtil.getToken());
             connection.connect();
-            InputStream inputStream = connection.getInputStream();
-            byte[] data = new byte[1024];
-            StringBuffer sb = new StringBuffer();
-            int length = 0;
-            while ((length = inputStream.read(data)) != -1) {
-                String s = new String(data);
-                sb.append(s);
+            if (connection.getResponseCode() == 200) {
+                InputStream inputStream = connection.getInputStream();
+                byte[] data = new byte[1024];
+                StringBuffer sb = new StringBuffer();
+                int length = 0;
+                while ((length = inputStream.read(data)) != -1) {
+                    String s = new String(data);
+                    sb.append(s);
+                }
+                message = sb.toString();
+                inputStream.close();
+            }else {
+                Toast.makeText(MyApplication.getContext(), connection.getResponseMessage(), Toast.LENGTH_SHORT).show();
             }
-            message = sb.toString();
-            inputStream.close();
             connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
@@ -98,23 +106,29 @@ public class HttpUtil {
         return message;
     }
 
-    public static HashMap<GroupBean,List<ProjectCheckBean>> projectCheck_Get(HashMap<String, String> options) {
-        JSONArray data = JSON.parseObject(HttpPost("projectCheck_Get.do", options)).getJSONArray("data");
-        HashMap<GroupBean,List<ProjectCheckBean>> checkResult=new HashMap<>();
-        for (int i = 0; i < data.size(); i++) {
-            int groupId=((JSONObject)data.get(i)).getIntValue("id");
-            String groupName=((JSONObject)data.get(i)).get("name").toString();
-            boolean isLeader=((JSONObject)data.get(i)).getBooleanValue("isLeader");
-            List<ProjectCheckBean> projectCheckBeans=JSON.parseArray(((JSONObject)data.get(i)).getJSONArray("projectCheckResult").toJSONString(),ProjectCheckBean.class);
-            checkResult.put(new GroupBean(groupId,groupName,isLeader),projectCheckBeans);
+    public static HashMap<GroupBean, List<ProjectCheckBean>> projectCheck_Get(@Nullable HashMap<String, String> options) {
+        String result = HttpPost("projectCheck_Get.do", options);
+        if (result != null) {
+            JSONArray data = JSON.parseObject(result).getJSONArray("data");
+            HashMap<GroupBean, List<ProjectCheckBean>> checkResult = new HashMap<>();
+            for (int i = 0; i < data.size(); i++) {
+                int groupId = ((JSONObject) data.get(i)).getIntValue("id");
+                String groupName = ((JSONObject) data.get(i)).get("name").toString();
+                boolean isLeader = ((JSONObject) data.get(i)).getBooleanValue("isLeader");
+                List<ProjectCheckBean> projectCheckBeans = JSON.parseArray(((JSONObject) data.get(i)).getJSONArray("projectCheckResult").toJSONString(), ProjectCheckBean.class);
+                checkResult.put(new GroupBean(groupId, groupName, isLeader), projectCheckBeans);
+            }
+            return checkResult;
         }
-
-        return checkResult;
+        return null;
     }
 
-    public static List<ClientBean> shelfProjects_Get(HashMap<String, String> options) {
-        JSONArray data = JSON.parseObject(HttpGet("iotsite/contract/contract_all", options)).getJSONArray("data");
-        return JSON.parseArray(data.toJSONString(), ClientBean.class);
+    public static List<ClientBean> shelfProjects_Get(@Nullable HashMap<String, String> options) {
+        String result = HttpGet("iotsite/contract/contract_all", options);
+        if (result != null) {
+            JSONArray data = JSON.parseObject(result).getJSONArray("data");
+            return JSON.parseArray(data.toJSONString(), ClientBean.class);
+        } else return null;
     }
 }
 

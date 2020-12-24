@@ -60,7 +60,7 @@ public class ProjectSearchFragment extends Fragment {
     private void init() {
         final TreeRecyclerAdapter treeRecyclerAdapter = new TreeRecyclerAdapter(TreeRecyclerType.SHOW_EXPAND);
         RecyclerView recyclerView = getView().findViewById(R.id.rv_content);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 6));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(treeRecyclerAdapter);
 //        treeRecyclerAdapter.setOnItemClickListener(new BaseRecyclerAdapter.OnItemClickListener() {

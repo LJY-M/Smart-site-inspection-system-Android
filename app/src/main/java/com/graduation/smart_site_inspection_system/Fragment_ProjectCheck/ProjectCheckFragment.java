@@ -16,12 +16,15 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import com.graduation.smart_site_inspection_system.Bean.GroupBean;
 import com.graduation.smart_site_inspection_system.Bean.ProjectCheckBean;
 import com.graduation.smart_site_inspection_system.R;
 import com.graduation.smart_site_inspection_system.util.projectCheckGet;
 import com.graduation.smart_site_inspection_system.views.SubmitActivity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 检查页面，根据用户id，即account，获取数据
@@ -40,7 +43,7 @@ public class ProjectCheckFragment extends Fragment {
 
     private ArrayList<ProjectCheckBean> pcBeans;
     private ProjectCheckBean nowPCBean;
-    private String data;  //handler返回的数据
+    private HashMap<GroupBean, List<ProjectCheckBean>> data;  //handler返回的数据
     private int count;  //项目数量
 
     private Handler mHandler=new Handler(){
@@ -48,10 +51,15 @@ public class ProjectCheckFragment extends Fragment {
         public void handleMessage(Message msg){
             super.handleMessage(msg);
             Bundle bundle;
+            List<GroupBean> groupBeanList;
+            List<List<ProjectCheckBean>> projectCheckBeanLists=new ArrayList<>();
             switch (msg.what){
                 case projectCheckGet.Msg_projectCheckGet_what: //根据用户id得到项目列表
-                    bundle=msg.getData();
-                    data=bundle.getString(projectCheckGet.Msg_projectCheckGet_String);
+                    data=(HashMap<GroupBean, List<ProjectCheckBean>>)msg.obj;
+                    groupBeanList=new ArrayList<>(data.keySet());
+                    for(GroupBean groupBean:groupBeanList){
+                        projectCheckBeanLists.add(data.get(groupBean));
+                    }
 // TODO                   此处解析data数据
                     count = 5;
                     for(int i=0; i<count; i++){
