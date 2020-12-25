@@ -14,6 +14,7 @@ import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,11 +22,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.graduation.smart_site_inspection_system.Bean.UserBean;
 import com.graduation.smart_site_inspection_system.R;
+import com.graduation.smart_site_inspection_system.util.HttpUtil;
 import com.graduation.smart_site_inspection_system.util.UserUtil;
 import com.graduation.smart_site_inspection_system.views.MainActivity;
 
 import java.net.HttpURLConnection;
+import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);  //去掉顶部标题栏
         setContentView(R.layout.activity_login);
 
         final EditText usernameEditText = findViewById(R.id.username);
@@ -200,11 +205,16 @@ public class LoginActivity extends AppCompatActivity {
 
             // 通过HttpUrlConnection发送GET请求
             try {
-                HttpURLConnection conn = null;
-                Thread.sleep(2000);
+//                HttpURLConnection conn = null;
+//                Thread.sleep(2000);
+                HashMap<String,String> options=new HashMap<>();
+                options.put("account",userText);
+                options.put("password",passText);
+                return HttpUtil.login(options);
+
                 //UserUtil.saveLoggedInUserName(context,"testuser");
                 //UserUtil.saveToken(context,"testtoken");
-                return true;
+
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;

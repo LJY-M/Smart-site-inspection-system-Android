@@ -18,6 +18,7 @@ import com.graduation.smart_site_inspection_system.Fragment_ProjectCheck.Project
 import com.graduation.smart_site_inspection_system.Fragment_ProjectSearch.ProjectSearchFragment;
 import com.graduation.smart_site_inspection_system.Fragment_My.MyFragment;
 import com.graduation.smart_site_inspection_system.R;
+import com.graduation.smart_site_inspection_system.util.HttpUtil;
 import com.graduation.smart_site_inspection_system.util.UserUtil;
 import com.graduation.smart_site_inspection_system.views.login.LoginActivity;
 
@@ -78,8 +79,14 @@ public class MainActivity extends AppCompatActivity {
         }
 //        加载默认的fragment
         showTab(0);
-        //if (!UserUtil.isLoggedIn(this))
-        //    startActivity(new Intent(this, LoginActivity.class));
+        if (!UserUtil.isLoggedIn())
+            startActivity(new Intent(this, LoginActivity.class));
+        else handler.post(new Runnable() {
+            @Override
+            public void run() {
+                //HttpUtil.login();
+            }
+        });
     }
 
     private void showTab(int i) {

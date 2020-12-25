@@ -5,11 +5,11 @@ public class UserBean {
     private int account;  //用户账户
     private String name;  //用户名
     private String password;  //用户密码
-    private int sex;  //性别
+    private String sex;  //性别
     private int user_limit;  //权限
     private String major;  //专业
     private String academic;  //学历
-    private String nativeplace;  //籍贯
+    private String native_place;  //籍贯
     private String address;  //家庭住址
     private int telephone;  //电话
     private String job;  //职位
@@ -17,6 +17,19 @@ public class UserBean {
     private String create_time;  //创建时间
     private String update_time;  //更新时间
     private int version;  //版本
+
+/*    private UserBean() {
+
+    }
+
+    static private UserBean user;
+
+    public static UserBean getInstance() {
+        if (user == null)
+            user = new UserBean();
+        return user;
+    }*/
+
 
     public int getAccount() {
         return account;
@@ -42,11 +55,11 @@ public class UserBean {
         this.password = password;
     }
 
-    public int getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(int sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -74,12 +87,12 @@ public class UserBean {
         this.academic = academic;
     }
 
-    public String getNativeplace() {
-        return nativeplace;
+    public String getNative_place() {
+        return native_place;
     }
 
-    public void setNativeplace(String nativeplace) {
-        this.nativeplace = nativeplace;
+    public void setNative_place(String native_place) {
+        this.native_place = native_place;
     }
 
     public String getAddress() {
