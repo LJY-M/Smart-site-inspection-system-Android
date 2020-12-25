@@ -36,8 +36,15 @@ public class CheckSys2Item extends TreeItem<ClientBean.ProjectBean.CheckSys1Bean
         CheckSys1Item checkSys1Item = (CheckSys1Item) getParentItem();
         if (checkSys1Item != null) {
             ProjectItem projectItem = (ProjectItem) checkSys1Item.getParentItem();
-            if (projectItem != null)
+            if (projectItem != null){
                 startSubmit.putExtra("projectId", projectItem.getData().projectId);
+                startSubmit.putExtra("projectName", projectItem.getData().projectName);
+                ClientItem clientItem=(ClientItem) projectItem.getParentItem();
+                if(clientItem!=null){
+                    startSubmit.putExtra("clientName", clientItem.getData().clientName);
+                }
+            }
+
         }
         viewHolder.itemView.getContext().startActivity(startSubmit);
     }

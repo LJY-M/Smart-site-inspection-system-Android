@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class HttpUtil {
     //    服务器地址
-    private static final String SERVER = "http://39.106.66.219:3000/mock/11";//"http://39.99.249.23:8080/Taobao/";
+    private static final String SERVER = "http://39.106.66.219:3000/mock/11";
 
     //http操作
     private static String HttpPost(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
@@ -119,17 +119,19 @@ public class HttpUtil {
         return message;
     }
 
-    public static HashMap<GroupBean, List<ProjectCheckBean>> projectCheck_Get(@Nullable HashMap<String, String> options) {
-        String result = HttpPost("projectCheck_Get.do", options, null);
+    public static HashMap<GroupBean, List<ProjectCheckBean>> projectCheck_Get() {
+        HashMap<String,String> options=new HashMap<>();
+        options.put("userId",String.valueOf(UserUtil.getUserId()));
+        String result = HttpPost("/iotsite/check/get_check_list_plus", options,"application/x-www-form-urlencoded");
         if (result != null) {
             JSONArray data = JSON.parseObject(result).getJSONArray("data");
             HashMap<GroupBean, List<ProjectCheckBean>> checkResult = new HashMap<>();
             for (int i = 0; i < data.size(); i++) {
                 int groupId = ((JSONObject) data.get(i)).getIntValue("id");
-                String groupName = ((JSONObject) data.get(i)).get("name").toString();
+                //String groupName = ((JSONObject) data.get(i)).get("name").toString();
                 boolean isLeader = ((JSONObject) data.get(i)).getBooleanValue("isLeader");
-                List<ProjectCheckBean> projectCheckBeans = JSON.parseArray(((JSONObject) data.get(i)).getString("projectCheckResult"), ProjectCheckBean.class);
-                checkResult.put(new GroupBean(groupId, groupName, isLeader), projectCheckBeans);
+                List<ProjectCheckBean> projectCheckBeans = JSON.parseArray(((JSONObject) data.get(i)).getString("checkList"), ProjectCheckBean.class);
+                checkResult.put(new GroupBean(groupId, "555", isLeader), projectCheckBeans);
             }
             return checkResult;
         }
@@ -153,6 +155,20 @@ public class HttpUtil {
             UserUtil.setUser(user);*/
             return true;
         } else return false;
+    }
+
+    /**    上传检查结果
+     id	指明更新的检查项目ID
+     projectId	填充内容
+     groupId	填充内容
+     userId	上传者的用户id
+     checkSystemId	填充内容
+     grade	打分
+     description	描述检查结果
+     */
+    public static boolean uploadCheckPost(@Nullable HashMap<String, String> options){
+        String result = HttpPost("/iotsite/check/upload_result", options,"application/x-www-form-urlencoded");
+        return result==null ? false : true;
     }
 
     public static UserBean getUser(){

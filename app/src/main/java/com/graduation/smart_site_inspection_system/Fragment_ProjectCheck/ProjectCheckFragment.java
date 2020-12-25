@@ -5,11 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +38,7 @@ import java.util.List;
 public class ProjectCheckFragment extends Fragment {
 
     private ListView mListView;
+    private Spinner mGroupLv;
     private ProjectCheckBaseAdapter mAdapter;
 
     private Handler handler;
@@ -43,39 +48,32 @@ public class ProjectCheckFragment extends Fragment {
 
     private ArrayList<ProjectCheckBean> pcBeans;
     private ProjectCheckBean nowPCBean;
+
     private HashMap<GroupBean, List<ProjectCheckBean>> data;  //handler返回的数据
-    private int count;  //项目数量
+    private List<GroupBean> groupBeanList;
+    private List<String> groupName=new ArrayList<>();
+    private ArrayList<ArrayList<ProjectCheckBean>> projectCheckBeanLists=new ArrayList<>();
+    private ArrayAdapter groupA;
+
 
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
             super.handleMessage(msg);
-            Bundle bundle;
-            List<GroupBean> groupBeanList;
-            List<List<ProjectCheckBean>> projectCheckBeanLists=new ArrayList<>();
             switch (msg.what){
                 case projectCheckGet.Msg_projectCheckGet_what: //根据用户id得到项目列表
                     data=(HashMap<GroupBean, List<ProjectCheckBean>>)msg.obj;
                     groupBeanList=new ArrayList<>(data.keySet());
                     for(GroupBean groupBean:groupBeanList){
-                        projectCheckBeanLists.add(data.get(groupBean));
+                        projectCheckBeanLists.add((ArrayList<ProjectCheckBean>) data.get(groupBean));
                     }
 // TODO                   此处解析data数据
-                    count = 5;
-                    for(int i=0; i<count; i++){
-                        nowPCBean = new ProjectCheckBean();
-                        if(nowPCBean!=null && pcBeans!=null){
-//                            填充List
-                            pcBeans.add(nowPCBean);
-                        }
+                    for(GroupBean g : groupBeanList){
+                        groupName.add(String.valueOf(g.getId()));
                     }
-
-//                    填充完毕，适配项目列表
-                    if(pcBeans!=null){
-                        mAdapter = new ProjectCheckBaseAdapter(getActivity(),pcBeans);
-                        mListView.setAdapter(mAdapter);
-                    }
-                    break;
+                    groupA = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,groupName);
+                    groupA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    mGroupLv.setAdapter(groupA);
             }
         }};
 
@@ -90,20 +88,27 @@ public class ProjectCheckFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-//        test = getActivity().findViewById(R.id.check_ltop);
-//        test.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), SubmitActivity.class);
-//                startActivity(intent);
-//            }
-//        });
 
         initData();
+        mGroupLv.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                    适配项目列表
+                if(projectCheckBeanLists!=null && projectCheckBeanLists.size()!=0){
+                    mAdapter = new ProjectCheckBaseAdapter(getActivity(),projectCheckBeanLists.get(position));
+                    mListView.setAdapter(mAdapter);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void initData(){
         mListView=(ListView) getActivity().findViewById(R.id.check_lv);
+        mGroupLv=(Spinner) getActivity().findViewById(R.id.check_groupLv);
 //        偏好设置获取用户id
         account = getActivity().getSharedPreferences("mine",getActivity().MODE_PRIVATE).getInt("id", 0);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

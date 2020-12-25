@@ -70,10 +70,10 @@ public class ProjectCheckBaseAdapter extends BaseAdapter {
 //        获取图片
 //        GetImageAsyncTask getImage = new GetImageAsyncTask(viewHolder.im);
 //        getImage.execute(pcBeans.get(i).getIm_url());
-        viewHolder.time.setText(pcBeans.get(i).getCk_createtime());
-        viewHolder.project.setText(pcBeans.get(i).getPj_id());
+        viewHolder.time.setText(pcBeans.get(i).getCreatetime());
+        viewHolder.project.setText(pcBeans.get(i).getDescription());
 //        服务器传过来的要么是未审核的要么是未通过的
-        viewHolder.status.setText(pcBeans.get(i).getCk_isexam()==0 ? "未审核" : "未通过");
+        viewHolder.status.setText(pcBeans.get(i).getExamState()==0 ? "未审核" : "未通过");
         return convertView;
     }
 

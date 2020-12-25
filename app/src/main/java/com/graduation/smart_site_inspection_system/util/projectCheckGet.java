@@ -32,7 +32,7 @@ public class projectCheckGet extends Thread{
         try{
             //传递的数据
             HashMap<String,String> options=new HashMap<>();
-            HashMap<GroupBean, List<ProjectCheckBean>> result = HttpUtil.projectCheck_Get(options);
+            HashMap<GroupBean, List<ProjectCheckBean>> result = HttpUtil.projectCheck_Get();
             //Bundle bundle = new Bundle();
             //bundle.putString(Msg_projectCheckGet_String, result);
 

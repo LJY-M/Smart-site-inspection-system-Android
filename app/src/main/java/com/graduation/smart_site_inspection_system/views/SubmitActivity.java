@@ -2,8 +2,9 @@ package com.graduation.smart_site_inspection_system.views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -13,9 +14,15 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.graduation.smart_site_inspection_system.Bean.GroupBean;
+import com.graduation.smart_site_inspection_system.Bean.ProjectCheckBean;
 import com.graduation.smart_site_inspection_system.R;
+import com.graduation.smart_site_inspection_system.util.UserUtil;
+import com.graduation.smart_site_inspection_system.util.projectCheckGet;
+import com.graduation.smart_site_inspection_system.util.uploadCheckPost;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,7 +44,7 @@ public class SubmitActivity extends AppCompatActivity {
     private String cN = "委托方";  //委托方
     private String pN = "项目";  //项目
     private String gN = "体系";  //体系
-    private String rN = "风险等级";  //风险等级
+    private String grade = "1";  //风险等级
 
     private List<String> riskStr = new ArrayList<>();
 //    假数据
@@ -49,6 +56,16 @@ public class SubmitActivity extends AppCompatActivity {
     private ArrayAdapter projectStrA;
     private ArrayAdapter groupStrA;
     private ArrayAdapter riskStrA;
+
+    private Handler mHandler=new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            super.handleMessage(msg);
+            switch (msg.what){
+                case uploadCheckPost.Msg_uploadCheckPost_what: //上传检查结果
+                    break;
+            }
+        }};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +101,7 @@ public class SubmitActivity extends AppCompatActivity {
         groupName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                gN = groupStr.get(position);
+                gN = String.valueOf(position+1);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -95,7 +112,7 @@ public class SubmitActivity extends AppCompatActivity {
         risk.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                rN = riskStr.get(position);
+                grade = riskStr.get(position);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -106,9 +123,16 @@ public class SubmitActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SubmitActivity.this
-                        ,cN+","+pN+","+gN+","+rN+","+checkPartName.getText()+","+problem.getText()
-                        , Toast.LENGTH_LONG).show();
+                uploadCheckPost mpcGet = new uploadCheckPost("3",
+                        String.valueOf(getIntent().getIntExtra("projectId",0)),
+                        "111",
+                        String.valueOf(UserUtil.getUserId()),
+                        String.valueOf(getIntent().getIntExtra("sys2Id",0)),
+                        grade,
+                        checkPartName.getText().toString()+":"+problem.getText().toString(),
+                        mHandler);
+                mpcGet.start();
+                Toast.makeText(SubmitActivity.this, getIntent().getStringExtra("projectName"),Toast.LENGTH_LONG).show();
             }
         });
 //        返回监听
@@ -130,19 +154,13 @@ public class SubmitActivity extends AppCompatActivity {
         submit = (ImageView)findViewById(R.id.submit_btn);
         back = (ImageView)findViewById(R.id.submit_back);
 
-//        假数据
+//        真数据
         riskStr.add("轻度风险");
         riskStr.add("一般风险");
         riskStr.add("高危风险");
-        clientStr.add("委托方甲");
-        clientStr.add("委托方乙");
-        clientStr.add("委托方丙");
-        projectStr.add("项目1");
-        projectStr.add("项目2");
-        projectStr.add("项目3");
-        groupStr.add("体系a");
-        groupStr.add("体系b");
-        groupStr.add("体系c");
+        clientStr.add(getIntent().getStringExtra("clientName"));
+        projectStr.add(getIntent().getStringExtra("projectName"));
+        groupStr.add(getIntent().getStringExtra("sys2Name"));
 
 //        为下拉列表定义一个数组适配器
         clientStrA = new ArrayAdapter(this,android.R.layout.simple_list_item_1,clientStr);
