@@ -30,7 +30,7 @@ public class HttpUtil {
     private static final String SERVER = "http://39.106.66.219:3000/mock/11";//"http://39.99.249.23:8080/Taobao/";
 
     //http操作
-    private static String HttpPost(String subUrl, @Nullable HashMap<String, String> options,@Nullable String content_type) {
+    private static String HttpPost(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
         String address = SERVER + subUrl;
         String result = null;
         try {
@@ -43,8 +43,8 @@ public class HttpUtil {
             conn.setDoInput(true);
             conn.setUseCaches(false);
             conn.setRequestProperty("Authorization", UserUtil.getToken());
-            if(content_type!=null&&!content_type.isEmpty())
-                conn.setRequestProperty("Content-type",content_type);
+            if (content_type != null && !content_type.isEmpty())
+                conn.setRequestProperty("Content-type", content_type);
             conn.connect();
             OutputStream out = conn.getOutputStream();
             if (options != null) {
@@ -70,9 +70,11 @@ public class HttpUtil {
                 is.close();
                 message.close();
                 result = new String(message.toByteArray());
-                String token=conn.getHeaderField("Authorization");
-                if(token!=null&&!token.isEmpty())
+                String token = conn.getHeaderField("Authorization");
+                if (token != null && !token.isEmpty())
                     UserUtil.saveToken(token);
+            }else if (conn.getResponseCode() == 2008) {
+                MyApplication.reLogin();
             } else {
                 Toast.makeText(MyApplication.getContext(), conn.getResponseMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -82,7 +84,7 @@ public class HttpUtil {
         return result;
     }
 
-    private static String HttpGet(String subUrl, @Nullable HashMap<String, String> options,@Nullable String content_type) {
+    private static String HttpGet(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
         String address = SERVER + subUrl;
         String message = null;
         try {
@@ -91,8 +93,8 @@ public class HttpUtil {
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5 * 1000);
             connection.setRequestProperty("Authorization", UserUtil.getToken());
-            if(content_type!=null&&!content_type.isEmpty())
-                connection.setRequestProperty("Content-type",content_type);
+            if (content_type != null && !content_type.isEmpty())
+                connection.setRequestProperty("Content-type", content_type);
             connection.connect();
             if (connection.getResponseCode() == 200) {
                 InputStream inputStream = connection.getInputStream();
@@ -105,7 +107,9 @@ public class HttpUtil {
                 }
                 message = sb.toString();
                 inputStream.close();
-            }else {
+            } else if (connection.getResponseCode() == 2008) {
+                MyApplication.reLogin();
+            } else {
                 Toast.makeText(MyApplication.getContext(), connection.getResponseMessage(), Toast.LENGTH_SHORT).show();
             }
             connection.disconnect();
@@ -116,7 +120,7 @@ public class HttpUtil {
     }
 
     public static HashMap<GroupBean, List<ProjectCheckBean>> projectCheck_Get(@Nullable HashMap<String, String> options) {
-        String result = HttpPost("projectCheck_Get.do", options,null);
+        String result = HttpPost("projectCheck_Get.do", options, null);
         if (result != null) {
             JSONArray data = JSON.parseObject(result).getJSONArray("data");
             HashMap<GroupBean, List<ProjectCheckBean>> checkResult = new HashMap<>();
@@ -133,20 +137,33 @@ public class HttpUtil {
     }
 
     public static List<ClientBean> shelfProjects_Get(@Nullable HashMap<String, String> options) {
-        String result = HttpGet("/iotsite/contract/contract_all", options,null);
+        String result = HttpGet("/iotsite/contract/contract_all", options, null);
         if (result != null) {
             return JSON.parseArray(JSON.parseObject(result).getString("data"), ClientBean.class);
         } else return new ArrayList<>();
     }
 
-    public static boolean login(@Nullable HashMap<String, String> options){
-        String result = HttpPost("/iotsite/user/login", options,"application/x-www-form-urlencoded");
+    public static boolean login(@Nullable HashMap<String, String> options) {
+        String result = HttpPost("/iotsite/user/login", options, "application/x-www-form-urlencoded");
         if (result != null) {
-            UserBean user=JSON.parseObject(JSON.parseObject(result).getString("data"), UserBean.class);
-            user.setPassword(options.get("password"));
-            UserUtil.setUser(user);
+            JSONObject data=JSON.parseObject(result).getJSONObject("data");
+            UserUtil.saveUserId(data.getIntValue("id"));
+            UserUtil.saveLoggedInAccount(options.get("account"));
+            /*user.setPassword(options.get("password"));
+            UserUtil.setUser(user);*/
             return true;
         } else return false;
+    }
+
+    public static UserBean getUser(){
+        int id=UserUtil.getUserId();
+        if(id!=-1) {
+            String result = HttpPost("/iotsite/user/index/id", null, "application/x-www-form-urlencoded");
+            if (result != null) {
+                return JSON.parseObject(JSON.parseObject(result).getString("data"),UserBean.class);
+            }
+        }
+        return new UserBean();
     }
 }
 

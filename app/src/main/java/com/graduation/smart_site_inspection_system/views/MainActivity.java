@@ -55,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);  //去掉顶部标题栏
         setContentView(R.layout.activity_main);
-
+        //检查登录状态
+        if (!UserUtil.isLoggedIn())
+            startActivity(new Intent(this, LoginActivity.class));
         init();
 //        初始化底部图标
         imageViews = new ImageView[]{mImg1, mImg2, mImg3};
@@ -79,14 +81,7 @@ public class MainActivity extends AppCompatActivity {
         }
 //        加载默认的fragment
         showTab(0);
-        if (!UserUtil.isLoggedIn())
-            startActivity(new Intent(this, LoginActivity.class));
-        else handler.post(new Runnable() {
-            @Override
-            public void run() {
-                //HttpUtil.login();
-            }
-        });
+
     }
 
     private void showTab(int i) {
