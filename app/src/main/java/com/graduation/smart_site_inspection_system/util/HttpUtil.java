@@ -158,7 +158,7 @@ public class HttpUtil {
     public static UserBean getUser(){
         int id=UserUtil.getUserId();
         if(id!=-1) {
-            String result = HttpPost("/iotsite/user/index/id", null, "application/x-www-form-urlencoded");
+            String result = HttpPost("/iotsite/user/index/"+id, null, "application/x-www-form-urlencoded");
             if (result != null) {
                 return JSON.parseObject(JSON.parseObject(result).getString("data"),UserBean.class);
             }
