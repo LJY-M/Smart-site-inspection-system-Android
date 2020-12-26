@@ -12,26 +12,23 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.graduation.smart_site_inspection_system.Bean.GroupBean;
-import com.graduation.smart_site_inspection_system.Bean.ProjectCheckBean;
 import com.graduation.smart_site_inspection_system.R;
 import com.graduation.smart_site_inspection_system.util.UserUtil;
-import com.graduation.smart_site_inspection_system.util.projectCheckGet;
 import com.graduation.smart_site_inspection_system.util.uploadCheckPost;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * 传入委托方、项目、体系、项目id等参数，提交时一并提交
  */
 public class SubmitActivity extends AppCompatActivity {
-    private Spinner clientName;  //委托方
-    private Spinner projectName;  //项目
-    private Spinner groupName;  //体系
+    private TextView clientName;  //委托方
+    private TextView projectName;  //项目
+    private TextView groupName;  //体系
     private Spinner risk;  //风险等级
 
     private EditText checkPartName;  //检查部位
@@ -41,20 +38,9 @@ public class SubmitActivity extends AppCompatActivity {
     private ImageView submit;  //提交
     private ImageView back;  //返回
 
-    private String cN = "委托方";  //委托方
-    private String pN = "项目";  //项目
-    private String gN = "体系";  //体系
     private String grade = "1";  //风险等级
 
     private List<String> riskStr = new ArrayList<>();
-//    假数据
-    private List<String> clientStr = new ArrayList<>();
-    private List<String> projectStr = new ArrayList<>();
-    private List<String> groupStr = new ArrayList<>();
-
-    private ArrayAdapter clientStrA;
-    private ArrayAdapter projectStrA;
-    private ArrayAdapter groupStrA;
     private ArrayAdapter riskStrA;
 
     private Handler mHandler=new Handler(){
@@ -63,6 +49,8 @@ public class SubmitActivity extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what){
                 case uploadCheckPost.Msg_uploadCheckPost_what: //上传检查结果
+                    submit.setImageResource(R.drawable.submit_success);
+                    Toast.makeText(SubmitActivity.this, "提交成功！",Toast.LENGTH_LONG).show();
                     break;
             }
         }};
@@ -75,39 +63,6 @@ public class SubmitActivity extends AppCompatActivity {
 
         init();  //控件初始化
 
-//        委托方监听事件
-        clientName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                cN = clientStr.get(position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-//        项目监听事件
-        projectName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                pN = projectStr.get(position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-//        体系监听事件
-        groupName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                gN = String.valueOf(position+1);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 //        风险等级监听事件
         risk.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -132,7 +87,6 @@ public class SubmitActivity extends AppCompatActivity {
                         checkPartName.getText().toString()+":"+problem.getText().toString(),
                         mHandler);
                 mpcGet.start();
-                Toast.makeText(SubmitActivity.this, getIntent().getStringExtra("projectName"),Toast.LENGTH_LONG).show();
             }
         });
 //        返回监听
@@ -144,38 +98,29 @@ public class SubmitActivity extends AppCompatActivity {
         });
     }
     public void init(){
-        clientName = (Spinner)findViewById(R.id.submit_clientname);
-        projectName = (Spinner)findViewById(R.id.submit_projectname);
-        groupName = (Spinner)findViewById(R.id.submit_groupname);
+        clientName = (TextView) findViewById(R.id.my_detail_account);
+        projectName = (TextView) findViewById(R.id.my_detail_name);
+        groupName = (TextView) findViewById(R.id.my_detail_telephone);
         risk = (Spinner)findViewById(R.id.submit_risk);
         checkPartName = (EditText)findViewById(R.id.submit_checkpartname);
         problem = (EditText)findViewById(R.id.submit_problem);
         photo = (ImageView)findViewById(R.id.submit_photo);
         submit = (ImageView)findViewById(R.id.submit_btn);
-        back = (ImageView)findViewById(R.id.submit_back);
+        back = (ImageView)findViewById(R.id.my_detail_back);
 
 //        真数据
         riskStr.add("轻度风险");
         riskStr.add("一般风险");
         riskStr.add("高危风险");
-        clientStr.add(getIntent().getStringExtra("clientName"));
-        projectStr.add(getIntent().getStringExtra("projectName"));
-        groupStr.add(getIntent().getStringExtra("sys2Name"));
+        clientName.setText(getIntent().getStringExtra("clientName"));
+        projectName.setText(getIntent().getStringExtra("projectName"));
+        groupName.setText(getIntent().getStringExtra("sys2Name"));
 
 //        为下拉列表定义一个数组适配器
-        clientStrA = new ArrayAdapter(this,android.R.layout.simple_list_item_1,clientStr);
-        projectStrA = new ArrayAdapter(this,android.R.layout.simple_list_item_1,projectStr);
-        groupStrA = new ArrayAdapter(this,android.R.layout.simple_list_item_1,groupStr);
         riskStrA = new ArrayAdapter(this,android.R.layout.simple_list_item_1,riskStr);
 //        为适配器设置下拉菜单的样式
-        clientStrA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        projectStrA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        groupStrA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         riskStrA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //        将适配器配置到下拉列表上
-        clientName.setAdapter(clientStrA);
-        projectName.setAdapter(projectStrA);
-        groupName.setAdapter(groupStrA);
         risk.setAdapter(riskStrA);
     }
 }

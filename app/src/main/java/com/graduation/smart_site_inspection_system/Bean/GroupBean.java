@@ -5,9 +5,9 @@ import androidx.annotation.Nullable;
 public class GroupBean {
     int id;
     String name;
-    boolean isLeader;
+    int isLeader;
 
-    public GroupBean(int id, String name, boolean isLeader){
+    public GroupBean(int id, String name, int isLeader){
         this.id=id;
         this.name=name;
         this.isLeader=isLeader;
@@ -39,12 +39,12 @@ public class GroupBean {
         this.name = name;
     }
 
-    public boolean isLeader() {
+    public int getIsLeader() {
         return isLeader;
     }
 
-    public void setLeader(boolean leader) {
-        isLeader = leader;
+    public void setIsLeader(int isLeader) {
+        this.isLeader = isLeader;
     }
 
 }

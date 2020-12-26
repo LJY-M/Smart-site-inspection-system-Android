@@ -131,7 +131,7 @@ public class HttpUtil {
                 //String groupName = ((JSONObject) data.get(i)).get("name").toString();
                 boolean isLeader = ((JSONObject) data.get(i)).getBooleanValue("isLeader");
                 List<ProjectCheckBean> projectCheckBeans = JSON.parseArray(((JSONObject) data.get(i)).getString("checkList"), ProjectCheckBean.class);
-                checkResult.put(new GroupBean(groupId, "555", isLeader), projectCheckBeans);
+                checkResult.put(new GroupBean(groupId, "555", isLeader?1:0), projectCheckBeans);
             }
             return checkResult;
         }
@@ -168,6 +168,15 @@ public class HttpUtil {
      */
     public static boolean uploadCheckPost(@Nullable HashMap<String, String> options){
         String result = HttpPost("/iotsite/check/upload_result", options,"application/x-www-form-urlencoded");
+        return result==null ? false : true;
+    }
+
+    /**    上传审核检查结果
+     checkId	审核特定的检查结果
+     flag	审核结果：1为通过；2为未通过
+     */
+    public static boolean reviewCheckPost(@Nullable HashMap<String, String> options){
+        String result = HttpPost("/iotsite/check/review_result", options,"application/x-www-form-urlencoded");
         return result==null ? false : true;
     }
 

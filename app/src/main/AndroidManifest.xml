@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.graduation.smart_site_inspection_system">
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".util.MyApplication"
         android:allowBackup="true"
@@ -11,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".views.SubmitActivity"></activity>
+        <activity android:name=".views.MyDetailActivity"></activity>
+        <activity android:name=".views.SubmitActivity" />
         <activity
             android:name=".views.login.LoginActivity"
             android:label="@string/title_activity_login" />

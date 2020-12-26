@@ -1,5 +1,6 @@
 package com.graduation.smart_site_inspection_system.Fragment_My;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,8 +22,12 @@ import com.graduation.smart_site_inspection_system.Bean.UserBean;
 import com.graduation.smart_site_inspection_system.Fragment_ProjectCheck.ProjectCheckBaseAdapter;
 import com.graduation.smart_site_inspection_system.R;
 import com.graduation.smart_site_inspection_system.util.HttpUtil;
+import com.graduation.smart_site_inspection_system.util.UserUtil;
 import com.graduation.smart_site_inspection_system.util.getUserPost;
 import com.graduation.smart_site_inspection_system.util.projectCheckGet;
+import com.graduation.smart_site_inspection_system.views.MyDetailActivity;
+import com.graduation.smart_site_inspection_system.views.SubmitActivity;
+import com.graduation.smart_site_inspection_system.views.login.LoginActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +69,33 @@ public class MyFragment extends Fragment {
 
         initData();
 
+//        退出登录
+        mQuit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserUtil.logout();
+                Intent toLogin = new Intent(getContext(), LoginActivity.class);
+                getContext().startActivity(toLogin);
+                getActivity().finish();
+            }
+        });
 
+//        个人信息
+        mDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle mUBB = new Bundle();
+                mUBB.putString("account",String.valueOf(mUser.getAccount()));
+                mUBB.putString("name", mUser.getName()==null ? "无信息" : mUser.getName());
+                mUBB.putString("telephone",String.valueOf(mUser.getTelephone()));
+                mUBB.putString("sex", mUser.getSex()==null ? "无信息" : mUser.getSex());
+                mUBB.putString("address", mUser.getAddress()==null ? "无信息" : mUser.getAddress());
+//                mUBB.put
+                Intent toDetail = new Intent(getContext(), MyDetailActivity.class);
+                toDetail.putExtra("mUser", mUBB);
+                getContext().startActivity(toDetail);
+            }
+        });
     }
 
     private void initData(){

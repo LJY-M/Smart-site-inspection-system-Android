@@ -1,6 +1,8 @@
 package com.graduation.smart_site_inspection_system.Fragment_ProjectCheck;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,10 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +30,7 @@ import com.graduation.smart_site_inspection_system.Bean.GroupBean;
 import com.graduation.smart_site_inspection_system.Bean.ProjectCheckBean;
 import com.graduation.smart_site_inspection_system.R;
 import com.graduation.smart_site_inspection_system.util.projectCheckGet;
+import com.graduation.smart_site_inspection_system.util.reviewCheckPost;
 import com.graduation.smart_site_inspection_system.views.SubmitActivity;
 
 import java.util.ArrayList;
@@ -41,13 +48,17 @@ public class ProjectCheckFragment extends Fragment {
     private Spinner mGroupLv;
     private ProjectCheckBaseAdapter mAdapter;
 
+//    Dialog控件
+    private TextView updateTime;
+    private TextView finishDateTime;
+    private TextView checkSystemId;
+    private TextView description;
+
     private Handler handler;
     private ConstraintLayout test;
     private int account;  //用户账户，通过偏好设置获取
-    private boolean isGroup;  //是否是组长
-
-    private ArrayList<ProjectCheckBean> pcBeans;
-    private ProjectCheckBean nowPCBean;
+    private boolean isLeader=false;  //是否是组长
+    private int groupPosition=0;  //当前组下标
 
     private HashMap<GroupBean, List<ProjectCheckBean>> data;  //handler返回的数据
     private List<GroupBean> groupBeanList;
@@ -67,13 +78,16 @@ public class ProjectCheckFragment extends Fragment {
                     for(GroupBean groupBean:groupBeanList){
                         projectCheckBeanLists.add((ArrayList<ProjectCheckBean>) data.get(groupBean));
                     }
-// TODO                   此处解析data数据
                     for(GroupBean g : groupBeanList){
                         groupName.add(String.valueOf(g.getId()));
                     }
                     groupA = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,groupName);
                     groupA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     mGroupLv.setAdapter(groupA);
+                    break;
+                case reviewCheckPost.Msg_reviewCheckPost_what: //审核检查结果
+                    Toast.makeText(getContext(), "审核成功！", Toast.LENGTH_SHORT).show();
+                    break;
             }
         }};
 
@@ -90,10 +104,14 @@ public class ProjectCheckFragment extends Fragment {
 
 
         initData();
+
         mGroupLv.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                    适配项目列表
+                groupPosition = position;
+//                判断是否是组长
+                isLeader = groupBeanList.get(position).getIsLeader()==1;
+//                适配项目列表
                 if(projectCheckBeanLists!=null && projectCheckBeanLists.size()!=0){
                     mAdapter = new ProjectCheckBaseAdapter(getActivity(),projectCheckBeanLists.get(position));
                     mListView.setAdapter(mAdapter);
@@ -104,6 +122,73 @@ public class ProjectCheckFragment extends Fragment {
 
             }
         });
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View v, int position, long l) {
+                final ProjectCheckBean nowClickPCB = projectCheckBeanLists.get(groupPosition).get(position);
+//                组长审核
+                if(isLeader){
+                    AlertDialog normalDialog = new AlertDialog.Builder(getContext())
+                            .setView(R.layout.leader_check)
+                            .setTitle("项目审核")
+                            .setPositiveButton("通过", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    reviewCheckPost mCPost = new reviewCheckPost(
+                                            String.valueOf(nowClickPCB.getId())
+                                            ,"1"
+                                            ,mHandler
+                                    );
+                                    mCPost.start();
+                                }
+                            })
+                            .setNegativeButton("不予通过", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    reviewCheckPost mCPost = new reviewCheckPost(
+                                            String.valueOf(nowClickPCB.getId())
+                                            ,"2"
+                                            ,mHandler
+                                    );
+                                    mCPost.start();
+                                }
+                            })
+                            .setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .create();
+                    normalDialog.show();
+
+                    Window window = normalDialog.getWindow();
+                    updateTime = (TextView) window.findViewById(R.id.leader_updateTime);
+                    finishDateTime = (TextView) window.findViewById(R.id.leader_finishDateTime);
+                    checkSystemId = (TextView) window.findViewById(R.id.leader_checkSystemId);
+                    description = (TextView) window.findViewById(R.id.leader_description);
+
+                    updateTime.setText(nowClickPCB.getCreatetime());
+                    finishDateTime.setText(nowClickPCB.getFinishDateTime());
+                    checkSystemId.setText(String.valueOf(nowClickPCB.getChecksys_id()));
+                    description.setText(nowClickPCB.getDescription());
+                }else{
+//                组员跳转，只有未通过的项目可以重新上传
+                    if(nowClickPCB.getExamState()==1){
+                        Intent startSubmit = new Intent(getContext(), SubmitActivity.class);
+                        startSubmit.putExtra("sys2Id", nowClickPCB.getId());
+                        startSubmit.putExtra("sys2Name", "后端没给我Name");
+                        startSubmit.putExtra("projectId", nowClickPCB.getProjectId());
+                        startSubmit.putExtra("projectName", "后端没给我项目Name");
+                        startSubmit.putExtra("clientName", "后端没给我委托方Name");
+                        getContext().startActivity(startSubmit);
+                    }else{
+                        Toast.makeText(getContext(), "项目还在审核中！", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     private void initData(){
@@ -111,12 +196,7 @@ public class ProjectCheckFragment extends Fragment {
         mGroupLv=(Spinner) getActivity().findViewById(R.id.check_groupLv);
 //        偏好设置获取用户id
         account = getActivity().getSharedPreferences("mine",getActivity().MODE_PRIVATE).getInt("id", 0);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-            }
-        });
 //        网络子线程，根据account，获取数据
         projectCheckGet mpcGet = new projectCheckGet(mHandler,Integer.toString(account));
         mpcGet.start();
