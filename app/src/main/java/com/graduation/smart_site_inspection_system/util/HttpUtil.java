@@ -27,7 +27,8 @@ import java.util.Map;
 
 public class HttpUtil {
     //    服务器地址
-    private static final String SERVER = "http://39.106.66.219:3000/mock/11";
+    private static final String SERVER = "http://39.106.66.219:8080";//"http://39.106.66.219:3000/mock/11";
+//    private static final String SERVER = "http://39.106.66.219:3000/mock/11";
 
     //http操作
     private static String HttpPost(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
@@ -63,7 +64,7 @@ public class HttpUtil {
                 InputStream is = conn.getInputStream();
                 ByteArrayOutputStream message = new ByteArrayOutputStream();
                 int len = 0;
-                byte buffer[] = new byte[1024];
+                byte[] buffer = new byte[1024];
                 while ((len = is.read(buffer)) != -1) {
                     message.write(buffer, 0, len);
                 }
@@ -73,10 +74,8 @@ public class HttpUtil {
                 String token = conn.getHeaderField("Authorization");
                 if (token != null && !token.isEmpty())
                     UserUtil.saveToken(token);
-            }else if (conn.getResponseCode() == 2008) {
+            } else if (conn.getResponseCode() == 2008) {
                 MyApplication.reLogin();
-            } else {
-                Toast.makeText(MyApplication.getContext(), conn.getResponseMessage(), Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,7 +85,7 @@ public class HttpUtil {
 
     private static String HttpGet(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
         String address = SERVER + subUrl;
-        String message = null;
+        String result = null;
         try {
             URL url = new URL(address);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -97,45 +96,43 @@ public class HttpUtil {
                 connection.setRequestProperty("Content-type", content_type);
             connection.connect();
             if (connection.getResponseCode() == 200) {
-                InputStream inputStream = connection.getInputStream();
-                byte[] data = new byte[1024];
-                StringBuffer sb = new StringBuffer();
-                int length = 0;
-                while ((length = inputStream.read(data)) != -1) {
-                    String s = new String(data);
-                    sb.append(s);
+                InputStream is = connection.getInputStream();
+                ByteArrayOutputStream message = new ByteArrayOutputStream();
+                int len = 0;
+                byte[] buffer = new byte[1024];
+                while ((len = is.read(buffer)) != -1) {
+                    message.write(buffer, 0, len);
                 }
-                message = sb.toString();
-                inputStream.close();
+                is.close();
+                message.close();
+                result = new String(message.toByteArray());
             } else if (connection.getResponseCode() == 2008) {
                 MyApplication.reLogin();
-            } else {
-                Toast.makeText(MyApplication.getContext(), connection.getResponseMessage(), Toast.LENGTH_SHORT).show();
             }
             connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return message;
+        return result;
     }
 
     public static HashMap<GroupBean, List<ProjectCheckBean>> projectCheck_Get() {
-        HashMap<String,String> options=new HashMap<>();
-        options.put("userId",String.valueOf(UserUtil.getUserId()));
-        String result = HttpPost("/iotsite/check/get_check_list_plus", options,"application/x-www-form-urlencoded");
+        HashMap<String, String> options = new HashMap<>();
+        options.put("userId", String.valueOf(UserUtil.getUserId()));
+        String result = HttpPost("/iotsite/check/get_check_list_plus", options, "application/x-www-form-urlencoded");
+        HashMap<GroupBean, List<ProjectCheckBean>> checkResult = new HashMap<>();
         if (result != null) {
             JSONArray data = JSON.parseObject(result).getJSONArray("data");
-            HashMap<GroupBean, List<ProjectCheckBean>> checkResult = new HashMap<>();
+
             for (int i = 0; i < data.size(); i++) {
                 int groupId = ((JSONObject) data.get(i)).getIntValue("id");
                 //String groupName = ((JSONObject) data.get(i)).get("name").toString();
                 boolean isLeader = ((JSONObject) data.get(i)).getBooleanValue("isLeader");
                 List<ProjectCheckBean> projectCheckBeans = JSON.parseArray(((JSONObject) data.get(i)).getString("checkList"), ProjectCheckBean.class);
-                checkResult.put(new GroupBean(groupId, "555", isLeader?1:0), projectCheckBeans);
+                checkResult.put(new GroupBean(groupId, "555", isLeader ? 1 : 0), projectCheckBeans);
             }
-            return checkResult;
         }
-        return null;
+        return checkResult;
     }
 
     public static List<ClientBean> shelfProjects_Get(@Nullable HashMap<String, String> options) {
@@ -148,7 +145,7 @@ public class HttpUtil {
     public static boolean login(@Nullable HashMap<String, String> options) {
         String result = HttpPost("/iotsite/user/login", options, "application/x-www-form-urlencoded");
         if (result != null) {
-            JSONObject data=JSON.parseObject(result).getJSONObject("data");
+            JSONObject data = JSON.parseObject(result).getJSONObject("data");
             UserUtil.saveUserId(data.getIntValue("id"));
             UserUtil.saveLoggedInAccount(options.get("account"));
             /*user.setPassword(options.get("password"));
@@ -157,35 +154,37 @@ public class HttpUtil {
         } else return false;
     }
 
-    /**    上传检查结果
-     id	指明更新的检查项目ID
-     projectId	填充内容
-     groupId	填充内容
-     userId	上传者的用户id
-     checkSystemId	填充内容
-     grade	打分
-     description	描述检查结果
+    /**
+     * 上传检查结果
+     * id	指明更新的检查项目ID
+     * projectId	填充内容
+     * groupId	填充内容
+     * userId	上传者的用户id
+     * checkSystemId	填充内容
+     * grade	打分
+     * description	描述检查结果
      */
-    public static boolean uploadCheckPost(@Nullable HashMap<String, String> options){
-        String result = HttpPost("/iotsite/check/upload_result", options,"application/x-www-form-urlencoded");
-        return result==null ? false : true;
+    public static boolean uploadCheckPost(@Nullable HashMap<String, String> options) {
+        String result = HttpPost("/iotsite/check/upload_result", options, "application/x-www-form-urlencoded");
+        return result == null ? false : true;
     }
 
-    /**    上传审核检查结果
-     checkId	审核特定的检查结果
-     flag	审核结果：1为通过；2为未通过
+    /**
+     * 上传审核检查结果
+     * checkId	审核特定的检查结果
+     * flag	审核结果：1为通过；2为未通过
      */
-    public static boolean reviewCheckPost(@Nullable HashMap<String, String> options){
-        String result = HttpPost("/iotsite/check/review_result", options,"application/x-www-form-urlencoded");
-        return result==null ? false : true;
+    public static boolean reviewCheckPost(@Nullable HashMap<String, String> options) {
+        String result = HttpPost("/iotsite/check/review_result", options, "application/x-www-form-urlencoded");
+        return result == null ? false : true;
     }
 
-    public static UserBean getUser(){
-        int id=UserUtil.getUserId();
-        if(id!=-1) {
-            String result = HttpPost("/iotsite/user/index/"+id, null, "application/x-www-form-urlencoded");
+    public static UserBean getUser() {
+        int id = UserUtil.getUserId();
+        if (id != -1) {
+            String result = HttpPost("/iotsite/user/index/" + id, null, "application/x-www-form-urlencoded");
             if (result != null) {
-                return JSON.parseObject(JSON.parseObject(result).getString("data"),UserBean.class);
+                return JSON.parseObject(JSON.parseObject(result).getString("data"), UserBean.class);
             }
         }
         return new UserBean();

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Smart-site-inspection-system</string>
+    <string name="app_name">智慧工地</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_username">用户名</string>
     <string name="prompt_password">密码</string>

@@ -21,6 +21,7 @@ public class MyApplication extends Application {
     }
 
     public static void reLogin(){
+        UserUtil.logout();
         context.startActivity(new Intent(context, LoginActivity.class));
         Toast.makeText(context, "登录过期，请重新登录", Toast.LENGTH_LONG).show();
     }

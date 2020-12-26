@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.alibaba.fastjson.JSON;
 import com.baozi.treerecyclerview.adpater.TreeRecyclerAdapter;
@@ -58,6 +59,16 @@ public class ProjectSearchFragment extends Fragment {
     }
 
     private void init() {
+
+        final SwipeRefreshLayout swip_refresh_layout = getView().findViewById(R.id.swipeLayout);
+        swip_refresh_layout.setColorSchemeResources(R.color.colorPrimary);
+        swip_refresh_layout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getShelfProject();
+            }
+        });
+
         final TreeRecyclerAdapter treeRecyclerAdapter = new TreeRecyclerAdapter(TreeRecyclerType.SHOW_EXPAND);
         RecyclerView recyclerView = getView().findViewById(R.id.rv_content);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 5));
@@ -73,21 +84,11 @@ public class ProjectSearchFragment extends Fragment {
         handler = new Handler() {
             @Override
             public void handleMessage(@NonNull Message msg) {
-
+                swip_refresh_layout.setRefreshing(false);
                 treeRecyclerAdapter.getItemManager().replaceAllItem((List<TreeItem>) msg.obj);
             }
         };
-        new Thread() {
-            @Override
-            public void run() {
-                HashMap<String, String> options = new HashMap<>();
-                List<ClientBean> clientBeans = HttpUtil.shelfProjects_Get(options);
-                List<TreeItem> items = ItemHelperFactory.createItems(clientBeans);
-                Message message = new Message();
-                message.obj = items;
-                handler.sendMessage(message);
-            }
-        }.start();
+        getShelfProject();
 
         //treeRecyclerAdapter.getItemManager().replaceAllItem(items);
         //        new Thread() {
@@ -100,6 +101,20 @@ public class ProjectSearchFragment extends Fragment {
                 treeRecyclerAdapter.getItemManager().replaceAllItem(items);*/
 //            }
 //        }.start();
+    }
+
+    private void getShelfProject() {
+        new Thread() {
+            @Override
+            public void run() {
+                HashMap<String, String> options = new HashMap<>();
+                List<ClientBean> clientBeans = HttpUtil.shelfProjects_Get(options);
+                List<TreeItem> items = ItemHelperFactory.createItems(clientBeans);
+                Message message = new Message();
+                message.obj = items;
+                handler.sendMessage(message);
+            }
+        }.start();
     }
 
     public String getFromAssets(String fileName) {
