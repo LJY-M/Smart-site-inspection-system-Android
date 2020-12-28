@@ -179,6 +179,16 @@ public class HttpUtil {
         return result == null ? false : true;
     }
 
+    /**
+     * 上传图片
+     * checkId	指明上传图片所属的检查项目
+     * file	文件	上传图片
+     */
+    public static boolean uploadPicturePost(@Nullable HashMap<String, String> options) {
+        String result = HttpPost("/iotsite/check/upload_picture", options, "multipart/form-data");
+        return result == null ? false : true;
+    }
+
     public static UserBean getUser() {
         int id = UserUtil.getUserId();
         if (id != -1) {

@@ -1,10 +1,17 @@
 package com.graduation.smart_site_inspection_system.views;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -16,9 +23,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.graduation.smart_site_inspection_system.R;
+import com.graduation.smart_site_inspection_system.util.ImageUtils;
 import com.graduation.smart_site_inspection_system.util.UserUtil;
 import com.graduation.smart_site_inspection_system.util.uploadCheckPost;
+import com.graduation.smart_site_inspection_system.util.uploadPicturePost;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +53,10 @@ public class SubmitActivity extends AppCompatActivity {
     private List<String> riskStr = new ArrayList<>();
     private ArrayAdapter riskStrA;
 
+//    图片
+    private final int TAKE_PHOTO_REQUEST_CODE=101;
+    private byte[] b;
+
     private Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
@@ -50,7 +64,10 @@ public class SubmitActivity extends AppCompatActivity {
             switch (msg.what){
                 case uploadCheckPost.Msg_uploadCheckPost_what: //上传检查结果
                     submit.setImageResource(R.drawable.submit_success);
-                    Toast.makeText(SubmitActivity.this, "提交成功！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(SubmitActivity.this, "信息提交成功！",Toast.LENGTH_LONG).show();
+                    break;
+                case uploadPicturePost.Msg_uploadPicturePost_what:
+                    Toast.makeText(SubmitActivity.this, "图片提交成功！",Toast.LENGTH_LONG).show();
                     break;
             }
         }};
@@ -74,21 +91,41 @@ public class SubmitActivity extends AppCompatActivity {
 
             }
         });
+
+//        图片拍照上传
+        photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePhoto();
+            }
+        });
+
+
 //        提交监听
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadCheckPost mpcGet = new uploadCheckPost("3",
-                        String.valueOf(getIntent().getIntExtra("projectId",0)),
-                        "111",
-                        String.valueOf(UserUtil.getUserId()),
-                        String.valueOf(getIntent().getIntExtra("sys2Id",0)),
-                        grade,
-                        checkPartName.getText().toString()+":"+problem.getText().toString(),
-                        mHandler);
+//                上传审核结果
+                uploadCheckPost mpcGet = new uploadCheckPost("3"
+                        ,String.valueOf(getIntent().getIntExtra("projectId",0))
+                        ,"111"
+                        ,String.valueOf(UserUtil.getUserId())
+                        ,String.valueOf(getIntent().getIntExtra("sys2Id",0))
+                        ,grade
+                        ,checkPartName.getText().toString()+":"+problem.getText().toString()
+                        ,mHandler);
                 mpcGet.start();
+
+//                上传图片
+                uploadPicturePost mPicture = new uploadPicturePost(
+                        String.valueOf(getIntent().getIntExtra("projectId",0))
+                        ,new String(b)
+                        ,mHandler
+                );
+                mPicture.start();
             }
         });
+
 //        返回监听
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,5 +159,42 @@ public class SubmitActivity extends AppCompatActivity {
         riskStrA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //        将适配器配置到下拉列表上
         risk.setAdapter(riskStrA);
+    }
+
+    private void takePhoto() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Uri uri = ImageUtils.getFaceImageUri(getApplicationContext());
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(intent, TAKE_PHOTO_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case TAKE_PHOTO_REQUEST_CODE:
+                if (resultCode == RESULT_OK){
+                    try {
+                        b = ImageUtils.getScaledBitArray();
+                        photo.setImageBitmap(BitmapFactory.decodeByteArray(b, 0, b.length));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case TAKE_PHOTO_REQUEST_CODE:
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.storage_permission_error),
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+        }
     }
 }
