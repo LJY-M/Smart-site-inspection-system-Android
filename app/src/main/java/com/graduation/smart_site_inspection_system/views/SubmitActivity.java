@@ -122,7 +122,7 @@ public class SubmitActivity extends AppCompatActivity {
                             String.valueOf(getIntent().getIntExtra("projectId", 0))
                             //将图片转成字符串，避免乱码
                             , String.valueOf(getIntent().getIntExtra("sys2Id", 0))
-                            , Base64.encodeToString(b, Base64.DEFAULT)
+                            , b
                             , mHandler
                     );
 

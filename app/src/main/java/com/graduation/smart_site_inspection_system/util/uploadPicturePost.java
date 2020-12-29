@@ -16,10 +16,10 @@ public class uploadPicturePost extends Thread{
 
     private String projectId;
     private String checkSystemId;
-    private String file;
+    private byte[] file;
     private Handler handler;
 
-    public uploadPicturePost(String projectId,String checkSystemId, String file, Handler handler) {
+    public uploadPicturePost(String projectId,String checkSystemId, byte[] file, Handler handler) {
         this.projectId = projectId;
         this.checkSystemId=checkSystemId;
         this.file = file;
@@ -33,8 +33,7 @@ public class uploadPicturePost extends Thread{
             HashMap<String,String> options=new HashMap<>();
             options.put("projectId", projectId);
             options.put("checkSystemId",checkSystemId);
-            options.put("file", file);
-            boolean result = HttpUtil.uploadPicturePost(options);
+            boolean result = HttpUtil.uploadPicturePost(file,options);
 
 
             //发送数据

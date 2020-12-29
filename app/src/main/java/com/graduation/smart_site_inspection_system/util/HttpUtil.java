@@ -15,6 +15,7 @@ import com.graduation.smart_site_inspection_system.Bean.UserBean;
 import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -179,7 +180,72 @@ public class HttpUtil {
                     String token = connection.getHeaderField("Authorization");
                     if (token != null && !token.isEmpty())
                         UserUtil.saveToken(token);
-                } else if (JSON.parseObject(result).getIntValue("code")  == 2008) {
+                } else if (JSON.parseObject(result).getIntValue("code") == 2008) {
+                    MyApplication.reLogin();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private static String HttpPicturePost(String subUrl, byte[] image, @Nullable HashMap<String, String> options) {
+        String end = "\r\n";
+        String twoHyphens = "--";
+        String boundary = "*****";
+        String address = SERVER + subUrl;
+        String result = null;
+        try {
+            URL url = new URL(address);//初始化URL
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");//请求方式
+            connection.setReadTimeout(5000);
+            connection.setConnectTimeout(5000);
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setUseCaches(false);
+            connection.setRequestProperty("Authorization", UserUtil.getToken());
+            connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            connection.connect();
+
+            DataOutputStream ds = new DataOutputStream(connection.getOutputStream());
+            //======传递参数
+            if (options != null) {
+                for (Map.Entry<String, String> option : options.entrySet()) {
+                    ds.writeBytes(boundary + end);
+                    ds.writeBytes("Content-Disposition: form-data; name=\"" + option.getKey() + "\"" + end);
+                    ds.writeBytes(end);
+                    ds.writeBytes(option.getValue() + end);
+                }
+            }
+            //======传递文件======
+            ds.writeBytes(boundary + end);
+            ds.writeBytes("Content-Disposition: form-data; name=\"file\";filename=\"image.jpg\"" + end);
+            ds.writeBytes("Content-Type: image/jpeg" + end);
+            ds.writeBytes(end);
+            ds.write(image);
+            ds.writeBytes(end);
+
+
+            ds.flush();
+            ds.close();
+            if (connection.getResponseCode() == 200) {
+                InputStream is = connection.getInputStream();
+                ByteArrayOutputStream message = new ByteArrayOutputStream();
+                int len = 0;
+                byte[] buffer = new byte[1024];
+                while ((len = is.read(buffer)) != -1) {
+                    message.write(buffer, 0, len);
+                }
+                is.close();
+                message.close();
+                result = new String(message.toByteArray());
+                if (JSON.parseObject(result).getIntValue("code") == 200) {
+                    String token = connection.getHeaderField("Authorization");
+                    if (token != null && !token.isEmpty())
+                        UserUtil.saveToken(token);
+                } else if (JSON.parseObject(result).getIntValue("code") == 2008) {
                     MyApplication.reLogin();
                 }
             }
@@ -274,8 +340,8 @@ public class HttpUtil {
      * 传入项目id和检查体系id
      * file	文件	上传图片
      */
-    public static boolean uploadPicturePost(@Nullable HashMap<String, String> options) {
-        String result = HttpPost("/iotsite/check/upload_picture", options, null);
+    public static boolean uploadPicturePost(byte[] image, @Nullable HashMap<String, String> options) {
+        String result = HttpPicturePost("/iotsite/check/upload_picture", image, options);
         //TODO 通过msg内容判断是否成功
         return result == null ? false : true;
     }
