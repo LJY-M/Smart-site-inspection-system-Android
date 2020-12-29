@@ -1,24 +1,20 @@
 package com.graduation.smart_site_inspection_system.Fragment_ProjectCheck;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +46,7 @@ public class ProjectCheckFragment extends Fragment {
     private ProjectCheckBaseAdapter mAdapter;
 
 //    Dialog控件
-    private TextView updateTime;
+    private TextView riskLevel;
     private TextView finishDateTime;
     private TextView checkSystemId;
     private TextView description;
@@ -65,6 +61,7 @@ public class ProjectCheckFragment extends Fragment {
     private List<String> groupName=new ArrayList<>();
     private ArrayList<ArrayList<ProjectCheckBean>> projectCheckBeanLists=new ArrayList<>();
     private ArrayAdapter groupA;
+    private String[] riskLevelStr = new String[]{"轻度风险","一般风险","高危风险"};
 
 
     private final Handler mHandler=new Handler(){
@@ -164,14 +161,20 @@ public class ProjectCheckFragment extends Fragment {
                             })
                             .create();
                     normalDialog.show();
+                    normalDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLUE);
+                    normalDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLUE);
+                    normalDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(Color.BLACK);
 
                     Window window = normalDialog.getWindow();
-                    updateTime = (TextView) window.findViewById(R.id.leader_updateTime);
+                    riskLevel = (TextView) window.findViewById(R.id.leader_riskLevel);
                     finishDateTime = (TextView) window.findViewById(R.id.leader_finishDateTime);
                     checkSystemId = (TextView) window.findViewById(R.id.leader_checkSystemId);
                     description = (TextView) window.findViewById(R.id.leader_description);
 
-                    updateTime.setText(nowClickPCB.getCreatetime());
+//                    0~2为正常风险值
+                    int nowLevel = nowClickPCB.getGrade();
+                    riskLevel.setText((nowLevel>=0 && nowLevel<=2) ? riskLevelStr[nowLevel+1] : "服务器异常");
+
                     finishDateTime.setText(nowClickPCB.getFinishDateTime());
                     checkSystemId.setText(String.valueOf(nowClickPCB.getChecksys_id()));
                     description.setText(nowClickPCB.getDescription());

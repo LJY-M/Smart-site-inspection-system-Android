@@ -20,14 +20,14 @@
             android:id="@+id/leader_tv1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="更新时间："
+            android:text="风险等级："
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/leader_updateTime"
+            android:id="@+id/leader_riskLevel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -51,7 +51,7 @@
             android:id="@+id/leader_tv2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="结束时间："
+            android:text="更新时间："
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

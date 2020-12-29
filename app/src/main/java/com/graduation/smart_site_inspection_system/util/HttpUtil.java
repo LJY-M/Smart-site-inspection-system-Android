@@ -330,8 +330,7 @@ public class HttpUtil {
      */
     public static boolean uploadCheckPost(@Nullable HashMap<String, String> options) {
         String result = HttpPut("/iotsite/check/check", options, "application/x-www-form-urlencoded");
-        //TODO 通过msg内容判断是否成功
-        return result == null ? false : true;
+        return (result!=null && JSON.parseObject(result).getIntValue("code")==200) ? true : false;
     }
 
     /**
@@ -341,8 +340,7 @@ public class HttpUtil {
      */
     public static boolean reviewCheckPost(@Nullable HashMap<String, String> options) {
         String result = HttpPut("/iotsite/check/review_result", options, "application/x-www-form-urlencoded");
-        //TODO 通过msg内容判断是否成功
-        return result == null ? false : true;
+        return (result!=null && JSON.parseObject(result).getIntValue("code")==200) ? true : false;
     }
 
     /**
@@ -352,8 +350,7 @@ public class HttpUtil {
      */
     public static boolean uploadPicturePost(byte[] image, @Nullable HashMap<String, String> options) {
         String result = HttpPicturePost("/iotsite/check/upload_picture", image, options);
-        //TODO 通过msg内容判断是否成功
-        return result == null ? false : true;
+        return (result!=null && JSON.parseObject(result).getIntValue("code")==200) ? true : false;
     }
 
     public static UserBean getUser() {
