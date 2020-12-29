@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -86,7 +87,11 @@ public class ProjectSearchFragment extends Fragment {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 swip_refresh_layout.setRefreshing(false);
-                treeRecyclerAdapter.getItemManager().replaceAllItem((List<TreeItem>) msg.obj);
+                List<TreeItem> items = (List<TreeItem>) msg.obj;
+                if (items.size() > 0) {
+                    treeRecyclerAdapter.getItemManager().replaceAllItem(items);
+                    getView().findViewById(R.id.tv_noData).setVisibility(View.GONE);
+                }else getView().findViewById(R.id.tv_noData).setVisibility(View.VISIBLE);
             }
         };
         if (UserUtil.isLoggedIn())

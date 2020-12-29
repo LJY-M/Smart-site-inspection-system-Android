@@ -114,7 +114,8 @@ public class ProjectCheckFragment extends Fragment {
                 if(projectCheckBeanLists!=null && projectCheckBeanLists.size()!=0){
                     mAdapter = new ProjectCheckBaseAdapter(getActivity(),projectCheckBeanLists.get(position));
                     mListView.setAdapter(mAdapter);
-                }
+                    getView().findViewById(R.id.tv_noData).setVisibility(View.GONE);
+                }else getView().findViewById(R.id.tv_noData).setVisibility(View.VISIBLE);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {

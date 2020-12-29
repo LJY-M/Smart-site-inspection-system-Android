@@ -11,8 +11,11 @@
     <string name="login_failed">"登录失败"</string>
 
     <string name="check_top_s">项目检查</string>
+    <string name="prject_top_s">项目列表</string>
     <string name="submit_title_s">项目检查</string>
     <string name="my_detail_title">我的信息</string>
+
+    <string name="no_data">这里空空如也,请刷新</string>
 
     <string name="storage_permission_error">获取存储权限失败！</string>
 </resources>
