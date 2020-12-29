@@ -211,16 +211,25 @@ public class HttpUtil {
 
             DataOutputStream ds = new DataOutputStream(connection.getOutputStream());
             //======传递参数
-            if (options != null) {
+/*            if (options != null) {
                 for (Map.Entry<String, String> option : options.entrySet()) {
                     ds.writeBytes(boundary + end);
                     ds.writeBytes("Content-Disposition: form-data; name=\"" + option.getKey() + "\"" + end);
                     ds.writeBytes(end);
                     ds.writeBytes(option.getValue() + end);
                 }
-            }
+            }*/
+            ds.writeBytes(twoHyphens+boundary + end);
+            ds.writeBytes("Content-Disposition: form-data; name=\"" + "projectId" + "\"" + end);
+            ds.writeBytes(end);
+            ds.writeBytes(options.get("projectId") + end);
+
+            ds.writeBytes(twoHyphens+boundary + end);
+            ds.writeBytes("Content-Disposition: form-data; name=\"" + "checkSystemId" + "\"" + end);
+            ds.writeBytes(end);
+            ds.writeBytes(options.get("checkSystemId") + end);
             //======传递文件======
-            ds.writeBytes(boundary + end);
+            ds.writeBytes(twoHyphens+boundary + end);
             ds.writeBytes("Content-Disposition: form-data; name=\"file\";filename=\"image.jpg\"" + end);
             ds.writeBytes("Content-Type: image/jpeg" + end);
             ds.writeBytes(end);
@@ -228,6 +237,7 @@ public class HttpUtil {
             ds.writeBytes(end);
 
 
+            ds.writeBytes(twoHyphens + boundary + twoHyphens + end);
             ds.flush();
             ds.close();
             if (connection.getResponseCode() == 200) {
