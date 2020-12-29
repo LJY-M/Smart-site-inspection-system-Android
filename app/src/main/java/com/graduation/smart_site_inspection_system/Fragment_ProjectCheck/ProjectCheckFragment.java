@@ -1,5 +1,6 @@
 package com.graduation.smart_site_inspection_system.Fragment_ProjectCheck;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -54,7 +55,6 @@ public class ProjectCheckFragment extends Fragment {
     private TextView checkSystemId;
     private TextView description;
 
-    private Handler handler;
     private ConstraintLayout test;
     private int account;  //用户账户，通过偏好设置获取
     private boolean isLeader=false;  //是否是组长
@@ -67,7 +67,7 @@ public class ProjectCheckFragment extends Fragment {
     private ArrayAdapter groupA;
 
 
-    private Handler mHandler=new Handler(){
+    private final Handler mHandler=new Handler(){
         @Override
         public void handleMessage(Message msg){
             super.handleMessage(msg);
@@ -79,11 +79,13 @@ public class ProjectCheckFragment extends Fragment {
                         projectCheckBeanLists.add((ArrayList<ProjectCheckBean>) data.get(groupBean));
                     }
                     for(GroupBean g : groupBeanList){
-                        groupName.add(String.valueOf(g.getId()));
+                        groupName.add(String.valueOf(g.getName()));
                     }
-                    groupA = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,groupName);
-                    groupA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    mGroupLv.setAdapter(groupA);
+                    if(getContext()!=null){
+                        groupA = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,groupName);
+                        groupA.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        mGroupLv.setAdapter(groupA);
+                    }
                     break;
                 case reviewCheckPost.Msg_reviewCheckPost_what: //审核检查结果
                     Toast.makeText(getContext(), "审核成功！", Toast.LENGTH_SHORT).show();
@@ -148,7 +150,7 @@ public class ProjectCheckFragment extends Fragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     reviewCheckPost mCPost = new reviewCheckPost(
                                             String.valueOf(nowClickPCB.getId())
-                                            ,"2"
+                                            ,"0"
                                             ,mHandler
                                     );
                                     mCPost.start();

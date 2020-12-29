@@ -52,7 +52,7 @@ public class MyFragment extends Fragment {
             switch (msg.what){
                 case getUserPost.Msg_getUserPost_what: //获取用户bean
                     mUser=(UserBean)msg.obj;
-                    mLoginTv.setText(mUser.getName()+"\n欢迎您使用本系统！");
+                    mLoginTv.setText(mUser.getName()==null ? "无法连接到网络..." : (mUser.getName()+"\n欢迎您使用本系统！"));
                     break;
             }
         }};
@@ -84,16 +84,18 @@ public class MyFragment extends Fragment {
         mDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle mUBB = new Bundle();
-                mUBB.putString("account",String.valueOf(mUser.getAccount()));
-                mUBB.putString("name", mUser.getName()==null ? "无信息" : mUser.getName());
-                mUBB.putString("telephone",String.valueOf(mUser.getTelephone()));
-                mUBB.putString("sex", mUser.getSex()==null ? "无信息" : mUser.getSex());
-                mUBB.putString("address", mUser.getAddress()==null ? "无信息" : mUser.getAddress());
+                if(mUser!=null){
+                    Bundle mUBB = new Bundle();
+                    mUBB.putString("account",String.valueOf(mUser.getAccount()));
+                    mUBB.putString("name", mUser.getName()==null ? "无信息" : mUser.getName());
+                    mUBB.putString("telephone",mUser.getTelephone()==null ? "无信息" : mUser.getTelephone());
+                    mUBB.putString("sex", mUser.getSex()==null ? "无信息" : mUser.getSex());
+                    mUBB.putString("address", mUser.getAddress()==null ? "无信息" : mUser.getAddress());
 //                mUBB.put
-                Intent toDetail = new Intent(getContext(), MyDetailActivity.class);
-                toDetail.putExtra("mUser", mUBB);
-                getContext().startActivity(toDetail);
+                    Intent toDetail = new Intent(getContext(), MyDetailActivity.class);
+                    toDetail.putExtra("mUser", mUBB);
+                    getContext().startActivity(toDetail);
+                }
             }
         });
     }
