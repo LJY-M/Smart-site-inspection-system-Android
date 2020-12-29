@@ -11,7 +11,7 @@ public class UserBean {
     private String academic;  //学历
     private String native_place;  //籍贯
     private String address;  //家庭住址
-    private int telephone;  //电话
+    private String  telephone;  //电话
     private String job;  //职位
     private int deleted;  //是否删除
     private String create_time;  //创建时间
@@ -103,11 +103,11 @@ public class UserBean {
         this.address = address;
     }
 
-    public int getTelephone() {
+    public String getTelephone() {
         return telephone;
     }
 
-    public void setTelephone(int telephone) {
+    public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
 

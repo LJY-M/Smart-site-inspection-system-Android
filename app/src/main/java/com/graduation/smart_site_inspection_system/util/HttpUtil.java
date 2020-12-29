@@ -264,7 +264,7 @@ public class HttpUtil {
      * flag	审核结果：1为通过；2为未通过
      */
     public static boolean reviewCheckPost(@Nullable HashMap<String, String> options) {
-        String result = HttpPost("/iotsite/check/review_result", options, "application/x-www-form-urlencoded");
+        String result = HttpPut("/iotsite/check/review_result", options, "application/x-www-form-urlencoded");
         //TODO 通过msg内容判断是否成功
         return result == null ? false : true;
     }
