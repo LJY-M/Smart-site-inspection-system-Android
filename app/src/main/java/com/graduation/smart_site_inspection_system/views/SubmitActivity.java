@@ -64,11 +64,19 @@ public class SubmitActivity extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what){
                 case uploadCheckPost.Msg_uploadCheckPost_what: //上传检查结果
-                    submit.setImageResource(R.drawable.submit_success);
-                    Toast.makeText(SubmitActivity.this, "信息提交成功！",Toast.LENGTH_LONG).show();
+                    boolean checkPostpostResult = (boolean)msg.obj;
+                    if(checkPostpostResult){
+                        submit.setImageResource(R.drawable.submit_success);
+                        Toast.makeText(SubmitActivity.this, "信息提交成功！",Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(SubmitActivity.this, "信息提交失败！",Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case uploadPicturePost.Msg_uploadPicturePost_what:
-                    Toast.makeText(SubmitActivity.this, "图片提交成功！",Toast.LENGTH_LONG).show();
+                    boolean picturePostResult = (boolean)msg.obj;
+                    Toast.makeText(SubmitActivity.this
+                            , picturePostResult ? "图片提交成功！" : "图片提交失败！"
+                            ,Toast.LENGTH_SHORT).show();
                     break;
             }
         }};

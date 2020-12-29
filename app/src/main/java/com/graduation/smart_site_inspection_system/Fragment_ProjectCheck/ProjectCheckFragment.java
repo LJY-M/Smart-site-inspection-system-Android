@@ -85,7 +85,8 @@ public class ProjectCheckFragment extends Fragment {
                     }
                     break;
                 case reviewCheckPost.Msg_reviewCheckPost_what: //审核检查结果
-                    Toast.makeText(getContext(), "审核成功！", Toast.LENGTH_SHORT).show();
+                    boolean postResult = (boolean)msg.obj;
+                    Toast.makeText(getContext(), postResult ? "审核成功！" : "审核失败！", Toast.LENGTH_SHORT).show();
                     break;
             }
         }};
