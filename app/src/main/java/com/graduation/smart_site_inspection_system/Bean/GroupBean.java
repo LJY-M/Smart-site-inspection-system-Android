@@ -7,11 +7,6 @@ public class GroupBean {
     String name;
     int isLeader;
 
-    public GroupBean(int id, String name, int isLeader){
-        this.id=id;
-        this.name=name;
-        this.isLeader=isLeader;
-    }
     @Override
     public int hashCode() {
         return Integer.valueOf(this.id).hashCode();

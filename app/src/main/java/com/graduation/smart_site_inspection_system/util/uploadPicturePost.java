@@ -14,12 +14,14 @@ public class uploadPicturePost extends Thread{
     public static final int Msg_uploadPicturePost_what = 71;  //msg.what
     public static final String Msg_uploadPicturePost_String = "uploadPicturePost";  //msg_string
 
-    private String checkId;
+    private String projectId;
+    private String checkSystemId;
     private String file;
     private Handler handler;
 
-    public uploadPicturePost(String checkId, String file, Handler handler) {
-        this.checkId = checkId;
+    public uploadPicturePost(String projectId,String checkSystemId, String file, Handler handler) {
+        this.projectId = projectId;
+        this.checkSystemId=checkSystemId;
         this.file = file;
         this.handler = handler;
     }
@@ -29,7 +31,8 @@ public class uploadPicturePost extends Thread{
         try{
             //传递的数据
             HashMap<String,String> options=new HashMap<>();
-            options.put("checkId", checkId);
+            options.put("projectId", projectId);
+            options.put("checkSystemId",checkSystemId);
             options.put("file", file);
             boolean result = HttpUtil.uploadPicturePost(options);
 

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -84,7 +85,7 @@ public class SubmitActivity extends AppCompatActivity {
         risk.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                grade = riskStr.get(position);
+                grade = position+1+"";
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -106,9 +107,8 @@ public class SubmitActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                上传审核结果
-                uploadCheckPost mpcGet = new uploadCheckPost("3"
-                        ,String.valueOf(getIntent().getIntExtra("projectId",0))
-                        ,"111"
+                uploadCheckPost mpcGet = new uploadCheckPost(
+                        String.valueOf(getIntent().getIntExtra("projectId",0))
                         ,String.valueOf(UserUtil.getUserId())
                         ,String.valueOf(getIntent().getIntExtra("sys2Id",0))
                         ,grade
@@ -117,12 +117,17 @@ public class SubmitActivity extends AppCompatActivity {
                 mpcGet.start();
 
 //                上传图片
-                uploadPicturePost mPicture = new uploadPicturePost(
-                        String.valueOf(getIntent().getIntExtra("projectId",0))
-                        ,new String(b)
-                        ,mHandler
-                );
-                mPicture.start();
+                if(b!=null) {
+                    uploadPicturePost mPicture = new uploadPicturePost(
+                            String.valueOf(getIntent().getIntExtra("projectId", 0))
+                            //将图片转成字符串，避免乱码
+                            , String.valueOf(getIntent().getIntExtra("sys2Id", 0))
+                            , Base64.encodeToString(b, Base64.DEFAULT)
+                            , mHandler
+                    );
+
+                    mPicture.start();
+                }
             }
         });
 

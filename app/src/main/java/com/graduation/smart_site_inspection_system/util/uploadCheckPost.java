@@ -24,19 +24,19 @@ public class uploadCheckPost extends Thread{
     public static final int Msg_uploadCheckPost_what = 41;  //msg.what
     public static final String Msg_uploadCheckPost_String = "uploadCheckPost";  //msg_string
 
-    private String id;
+    //private String id;
     private String projectId;
-    private String groupId;
+   // private String groupId;
     private String userId;
     private String checkSystemId;
     private String grade;
     private String description;
     private Handler handler;
 
-    public uploadCheckPost(String id, String projectId, String groupId, String userId, String checkSystemId, String grade, String description, Handler handler) {
-        this.id = id;
+    public uploadCheckPost(String projectId, String userId, String checkSystemId, String grade, String description, Handler handler) {
+       // this.id = id;
         this.projectId = projectId;
-        this.groupId = groupId;
+        //this.groupId = groupId;
         this.userId = userId;
         this.checkSystemId = checkSystemId;
         this.grade = grade;
@@ -49,9 +49,9 @@ public class uploadCheckPost extends Thread{
         try{
             //传递的数据
             HashMap<String,String> options=new HashMap<>();
-            options.put("id",id);
+            //options.put("id",id);
             options.put("projectId",projectId);
-            options.put("groupId",groupId);
+            //options.put("groupId",groupId);
             options.put("userId",userId);
             options.put("checkSystemId",checkSystemId);
             options.put("grade",grade);

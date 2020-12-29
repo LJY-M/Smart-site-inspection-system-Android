@@ -28,6 +28,7 @@ import com.baozi.treerecyclerview.item.TreeItem;
 import com.graduation.smart_site_inspection_system.Bean.ProjectTree.ClientBean;
 import com.graduation.smart_site_inspection_system.R;
 import com.graduation.smart_site_inspection_system.util.HttpUtil;
+import com.graduation.smart_site_inspection_system.util.UserUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,7 +89,8 @@ public class ProjectSearchFragment extends Fragment {
                 treeRecyclerAdapter.getItemManager().replaceAllItem((List<TreeItem>) msg.obj);
             }
         };
-        getShelfProject();
+        if (UserUtil.isLoggedIn())
+            getShelfProject();
 
         //treeRecyclerAdapter.getItemManager().replaceAllItem(items);
         //        new Thread() {

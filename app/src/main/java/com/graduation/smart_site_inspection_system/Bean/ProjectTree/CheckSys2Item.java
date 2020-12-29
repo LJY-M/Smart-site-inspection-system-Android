@@ -29,7 +29,7 @@ public class CheckSys2Item extends TreeItem<ClientBean.ProjectBean.CheckSys1Bean
     @Override
     public void onClick(ViewHolder viewHolder) {
         super.onClick(viewHolder);
-        Toast.makeText(viewHolder.itemView.getContext(), viewHolder.getTextView(R.id.tv_content).getText(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(viewHolder.itemView.getContext(), viewHolder.getTextView(R.id.tv_content).getText(), Toast.LENGTH_SHORT).show();
         Intent startSubmit = new Intent(viewHolder.itemView.getContext(), SubmitActivity.class);
         startSubmit.putExtra("sys2Id", this.data.id);
         startSubmit.putExtra("sys2Name", this.data.name);

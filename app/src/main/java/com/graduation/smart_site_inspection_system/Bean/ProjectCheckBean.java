@@ -1,11 +1,17 @@
 package com.graduation.smart_site_inspection_system.Bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
+import java.util.List;
+
 public class ProjectCheckBean {
 
     private int id;  //检查id
     private int projectId;  //项目id
     private int groupId;  //检查组id
+    @JSONField(name = "checkSystemId")
     private int checksys_id;//检查体系id
+    @JSONField(name = "createTime")
     private String createtime;  //创建时间
     private String finishDateTime;  //
     private int grade;  //结果风险
@@ -13,7 +19,7 @@ public class ProjectCheckBean {
     private String description;  //结果描述
     private int examState;  //是否审核
     private int passState;  //是否通过
-    private String im_url;  //图片url
+    private List<String> pictureList;  //图片url
 
     public int getId() {
         return id;
@@ -95,11 +101,11 @@ public class ProjectCheckBean {
         this.passState = passState;
     }
 
-    public String getIm_url() {
-        return im_url;
+    public List<String> getPictureList() {
+        return pictureList;
     }
 
-    public void setIm_url(String im_url) {
-        this.im_url = im_url;
+    public void setPictureList(List<String> pictureList) {
+        this.pictureList = pictureList;
     }
 }
