@@ -180,15 +180,15 @@ public class ProjectCheckFragment extends Fragment {
                     checkSystemId.setText(String.valueOf(nowClickPCB.getChecksys_id()));
                     description.setText(nowClickPCB.getDescription());
                 }else{
-//                组员跳转，只有未通过的项目可以重新上传
-                    if(nowClickPCB.getExamState()==1){
-                        Intent startSubmit = new Intent(getContext(), SubmitActivity.class);
-                        startSubmit.putExtra("sys2Id", nowClickPCB.getId());
-                        startSubmit.putExtra("sys2Name", "后端没给我Name");
-                        startSubmit.putExtra("projectId", nowClickPCB.getProjectId());
-                        startSubmit.putExtra("projectName", "后端没给我项目Name");
-                        startSubmit.putExtra("clientName", "后端没给我委托方Name");
-                        getContext().startActivity(startSubmit);
+//                组员不跳转
+                    if(nowClickPCB.getExamState()==0){
+//                        Intent startSubmit = new Intent(getContext(), SubmitActivity.class);
+//                        startSubmit.putExtra("sys2Id", nowClickPCB.getId());
+//                        startSubmit.putExtra("sys2Name", "重新提交");
+//                        startSubmit.putExtra("projectId", nowClickPCB.getProjectId());
+//                        startSubmit.putExtra("projectName", "后端没给我项目Name");
+//                        startSubmit.putExtra("clientName", "后端没给我委托方Name");
+//                        getContext().startActivity(startSubmit);
                     }else{
                         Toast.makeText(getContext(), "项目还在审核中！", Toast.LENGTH_SHORT).show();
                     }
