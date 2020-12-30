@@ -173,9 +173,9 @@ public class ProjectCheckFragment extends Fragment {
                     checkSystemId = (TextView) window.findViewById(R.id.leader_checkSystemId);
                     description = (TextView) window.findViewById(R.id.leader_description);
 
-//                    0~2为正常风险值
+//                    1~3为正常风险值
                     int nowLevel = nowClickPCB.getGrade();
-                    riskLevel.setText((nowLevel>=0 && nowLevel<=2) ? riskLevelStr[nowLevel+1] : "服务器异常");
+                    riskLevel.setText((nowLevel>=1 && nowLevel<=3) ? riskLevelStr[nowLevel-1] : "服务器异常");
 
                     finishDateTime.setText(nowClickPCB.getFinishDateTime());
                     checkSystemId.setText(String.valueOf(nowClickPCB.getChecksys_id()));
