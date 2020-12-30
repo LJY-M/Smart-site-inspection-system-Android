@@ -33,7 +33,6 @@ public class HttpUtil {
 //    private static final String SERVER = "http://39.106.66.219:3000/mock/11";
 
     //http操作
-    @org.jetbrains.annotations.Nullable
     private static String HttpPost(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
         String address = SERVER + subUrl;
         String result = null;
@@ -84,11 +83,11 @@ public class HttpUtil {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return result;
     }
 
-    @org.jetbrains.annotations.Nullable
     private static String HttpGet(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
         StringBuilder address = new StringBuilder(SERVER + subUrl);
         String result = null;
@@ -135,6 +134,7 @@ public class HttpUtil {
             connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
         return result;
     }
@@ -190,6 +190,7 @@ public class HttpUtil {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return result;
     }
@@ -266,6 +267,7 @@ public class HttpUtil {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
         return result;
     }
