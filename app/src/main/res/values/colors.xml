@@ -6,6 +6,8 @@
     <color name="colorForth">#E7F0F6</color>
 
     <color name="colorDividerGray">#50CACACA</color>
+    <color name="colorExaming">#FFC107</color>
+    <color name="colorPassed">#8BC34A</color>
 
     <color name="colorPrimary">#AED2EF</color>
     <color name="colorPrimaryDark">#328ED8</color>

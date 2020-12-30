@@ -73,7 +73,7 @@ public class ProjectCheckBaseAdapter extends BaseAdapter {
         viewHolder.time.setText(pcBeans.get(i).getCreatetime());
         viewHolder.project.setText(pcBeans.get(i).getDescription());
 //        服务器传过来的要么是未审核的要么是未通过的，exam==1就是未审核，exam==0就是未检查或未通过
-        viewHolder.status.setText(pcBeans.get(i).getExamState()==1 ? "未审核" : "未通过");
+        viewHolder.status.setText(pcBeans.get(i).getExamState()==1 ? "未审核" : "待检查");
         return convertView;
     }
 

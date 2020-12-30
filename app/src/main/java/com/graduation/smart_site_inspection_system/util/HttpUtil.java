@@ -12,6 +12,7 @@ import com.graduation.smart_site_inspection_system.Bean.ProjectCheckBean;
 import com.graduation.smart_site_inspection_system.Bean.ProjectTree.ClientBean;
 import com.graduation.smart_site_inspection_system.Bean.UserBean;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
@@ -32,6 +33,7 @@ public class HttpUtil {
 //    private static final String SERVER = "http://39.106.66.219:3000/mock/11";
 
     //http操作
+    @org.jetbrains.annotations.Nullable
     private static String HttpPost(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
         String address = SERVER + subUrl;
         String result = null;
@@ -78,7 +80,7 @@ public class HttpUtil {
                         UserUtil.saveToken(token);
                 } else if (JSON.parseObject(result).getIntValue("code") == 2008) {
                     MyApplication.reLogin();
-                }
+                }else return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,6 +88,7 @@ public class HttpUtil {
         return result;
     }
 
+    @org.jetbrains.annotations.Nullable
     private static String HttpGet(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
         StringBuilder address = new StringBuilder(SERVER + subUrl);
         String result = null;
@@ -127,7 +130,7 @@ public class HttpUtil {
                         UserUtil.saveToken(token);
                 } else if (JSON.parseObject(result).getIntValue("code") == 2008) {
                     MyApplication.reLogin();
-                }
+                }else return null;
             }
             connection.disconnect();
         } catch (Exception e) {
@@ -136,6 +139,7 @@ public class HttpUtil {
         return result;
     }
 
+    @org.jetbrains.annotations.Nullable
     private static String HttpPut(String subUrl, @Nullable HashMap<String, String> options, @Nullable String content_type) {
         String address = SERVER + subUrl;
         String result = null;
@@ -182,7 +186,7 @@ public class HttpUtil {
                         UserUtil.saveToken(token);
                 } else if (JSON.parseObject(result).getIntValue("code") == 2008) {
                     MyApplication.reLogin();
-                }
+                }else return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -190,6 +194,7 @@ public class HttpUtil {
         return result;
     }
 
+    @org.jetbrains.annotations.Nullable
     private static String HttpPicturePost(String subUrl, byte[] image, @Nullable HashMap<String, String> options) {
         String end = "\r\n";
         String twoHyphens = "--";
@@ -257,7 +262,7 @@ public class HttpUtil {
                         UserUtil.saveToken(token);
                 } else if (JSON.parseObject(result).getIntValue("code") == 2008) {
                     MyApplication.reLogin();
-                }
+                }else return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -265,6 +270,7 @@ public class HttpUtil {
         return result;
     }
 
+    @NotNull
     public static HashMap<GroupBean, List<ProjectCheckBean>> projectCheck_Get() {
         HashMap<String, String> options = new HashMap<>();
         options.put("userId", String.valueOf(UserUtil.getUserId()));

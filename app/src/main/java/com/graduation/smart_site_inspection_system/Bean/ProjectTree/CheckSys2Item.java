@@ -14,6 +14,11 @@ public class CheckSys2Item extends TreeItem<ClientBean.ProjectBean.CheckSys1Bean
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder) {
         viewHolder.setText(R.id.tv_content, data.name);
+        if(!data.examState)
+        viewHolder.setBackgroundRes(R.id.tv_content,R.drawable.border);
+        else if (data.passState)
+            viewHolder.setBackgroundRes(R.id.tv_content,R.drawable.border_passed);
+        else viewHolder.setBackgroundRes(R.id.tv_content,R.drawable.border_examing);
     }
 
     @Override
@@ -30,22 +35,24 @@ public class CheckSys2Item extends TreeItem<ClientBean.ProjectBean.CheckSys1Bean
     public void onClick(ViewHolder viewHolder) {
         super.onClick(viewHolder);
         //Toast.makeText(viewHolder.itemView.getContext(), viewHolder.getTextView(R.id.tv_content).getText(), Toast.LENGTH_SHORT).show();
-        Intent startSubmit = new Intent(viewHolder.itemView.getContext(), SubmitActivity.class);
-        startSubmit.putExtra("sys2Id", this.data.id);
-        startSubmit.putExtra("sys2Name", this.data.name);
-        CheckSys1Item checkSys1Item = (CheckSys1Item) getParentItem();
-        if (checkSys1Item != null) {
-            ProjectItem projectItem = (ProjectItem) checkSys1Item.getParentItem();
-            if (projectItem != null){
-                startSubmit.putExtra("projectId", projectItem.getData().projectId);
-                startSubmit.putExtra("projectName", projectItem.getData().projectName);
-                ClientItem clientItem=(ClientItem) projectItem.getParentItem();
-                if(clientItem!=null){
-                    startSubmit.putExtra("clientName", clientItem.getData().clientName);
+        if(!data.examState&&!data.passState) {
+            Intent startSubmit = new Intent(viewHolder.itemView.getContext(), SubmitActivity.class);
+            startSubmit.putExtra("sys2Id", this.data.id);
+            startSubmit.putExtra("sys2Name", this.data.name);
+            CheckSys1Item checkSys1Item = (CheckSys1Item) getParentItem();
+            if (checkSys1Item != null) {
+                ProjectItem projectItem = (ProjectItem) checkSys1Item.getParentItem();
+                if (projectItem != null) {
+                    startSubmit.putExtra("projectId", projectItem.getData().projectId);
+                    startSubmit.putExtra("projectName", projectItem.getData().projectName);
+                    ClientItem clientItem = (ClientItem) projectItem.getParentItem();
+                    if (clientItem != null) {
+                        startSubmit.putExtra("clientName", clientItem.getData().clientName);
+                    }
                 }
-            }
 
+            }
+            viewHolder.itemView.getContext().startActivity(startSubmit);
         }
-        viewHolder.itemView.getContext().startActivity(startSubmit);
     }
 }

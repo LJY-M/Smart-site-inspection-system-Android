@@ -29,6 +29,8 @@ public class ClientBean {
             public static class CheckSys2Bean {
                 public int id;
                 public String name;
+                public boolean examState;
+                public boolean passState;
             }
 
         }
