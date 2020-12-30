@@ -50,7 +50,7 @@ public class MyDetailActivity extends AppCompatActivity {
         mAccount.setText(mUser.getString("account"));
         mName.setText(mUser.getString("name"));
         mTelephone.setText(mUser.getString("telephone"));
-        mSex.setText(mUser.getString("sex")=="m" ? "男" : "女");
+        mSex.setText(mUser.getString("sex").equals("m") ? "男" : "女");
         mAddress.setText(mUser.getString("address"));
     }
 }
